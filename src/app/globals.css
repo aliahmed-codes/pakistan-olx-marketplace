@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 186 100% 10%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 174 80% 52%;
+    --accent-foreground: 186 100% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 186 100% 10%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 174 80% 52%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 174 80% 52%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 174 80% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Image gallery styles */
+.image-gallery {
+  @apply relative overflow-hidden rounded-lg;
+}
+
+.image-gallery img {
+  @apply transition-transform duration-300;
+}
+
+.image-gallery:hover img {
+  @apply scale-105;
+}
+
+/* Featured badge animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 206, 50, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 206, 50, 0.8);
+  }
+}
+
+.featured-badge {
+  animation: pulse-glow 2s infinite;
+}
+
+/* Chat message bubble */
+.message-bubble {
+  @apply max-w-[80%] rounded-2xl px-4 py-2;
+}
+
+.message-bubble.sent {
+  @apply bg-olx-accent text-olx rounded-br-none;
+}
+
+.message-bubble.received {
+  @apply bg-gray-100 text-gray-800 rounded-bl-none;
+}
+
+/* Loading skeleton */
+.skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+/* Price tag */
+.price-tag {
+  @apply inline-flex items-center font-bold text-lg text-olx;
+}
+
+.price-tag::before {
+  content: 'Rs ';
+  @apply text-sm font-normal text-gray-500 mr-1;
+}
+
+/* Category card hover effect */
+.category-card {
+  @apply transition-all duration-300;
+}
+
+.category-card:hover {
+  @apply transform -translate-y-1 shadow-lg;
+}
+
+/* Ad card hover effect */
+.ad-card {
+  @apply transition-all duration-300;
+}
+
+.ad-card:hover {
+  @apply shadow-xl;
+}
+
+/* Admin sidebar */
+.admin-sidebar {
+  @apply fixed left-0 top-0 h-full w-64 bg-olx text-white z-50;
+}
+
+.admin-sidebar-link {
+  @apply flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors;
+}
+
+.admin-sidebar-link:hover {
+  @apply bg-olx-light;
+}
+
+.admin-sidebar-link.active {
+  @apply bg-olx-accent text-olx;
+}
