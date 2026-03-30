@@ -105,7 +105,7 @@ export default function MyStorePage() {
             </div>
             <div className="flex gap-3">
               <Link href={`/stores/${storeData.slug}`}>
-                <Button variant="outline" className="border-white text-white hover:bg-white/10">
+                <Button variant="outline" className="border-white text-white bg-transparent hover:bg-white/10">
                   <Eye className="w-4 h-4 mr-2" />
                   View Store
                 </Button>

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   MapPin,
   Calendar,
@@ -18,11 +18,11 @@ import {
   ChevronRight,
   Check,
   AlertCircle,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent } from '@/components/ui/card';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -30,10 +30,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
-import { formatPrice, formatDate, formatRelativeTime, getInitials } from '@/lib/utils';
-import { AdCard } from './AdCard';
+} from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  formatPrice,
+  formatDate,
+  formatRelativeTime,
+  getInitials,
+} from "@/lib/utils";
+import { AdCard } from "./AdCard";
 
 interface AdDetailProps {
   ad: {
@@ -45,7 +50,7 @@ interface AdDetailProps {
     city: string;
     area: string | null;
     phone: string | null;
-    condition: 'NEW' | 'USED';
+    condition: "NEW" | "USED";
     isApproved: boolean;
     isFeatured: boolean;
     status: string;
@@ -69,7 +74,12 @@ interface AdDetailProps {
   isOwner: boolean;
 }
 
-export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwner }: AdDetailProps) {
+export function AdDetail({
+  ad,
+  relatedAds,
+  isFavorite: initialIsFavorite,
+  isOwner,
+}: AdDetailProps) {
   const router = useRouter();
   const { data: session } = useSession();
   const { toast } = useToast();
@@ -78,14 +88,14 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
   const [isLoading, setIsLoading] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
 
-  const price = typeof ad.price === 'object' ? ad.price.toNumber() : ad.price;
+  const price = typeof ad.price === "object" ? ad.price.toNumber() : ad.price;
 
   const handleFavorite = async () => {
     if (!session?.user) {
       toast({
-        title: 'Login Required',
-        description: 'Please login to add items to favorites.',
-        variant: 'destructive',
+        title: "Login Required",
+        description: "Please login to add items to favorites.",
+        variant: "destructive",
       });
       return;
     }
@@ -95,36 +105,36 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
     try {
       if (isFavorite) {
         const response = await fetch(`/api/favorites?adId=${ad.id}`, {
-          method: 'DELETE',
+          method: "DELETE",
         });
 
         if (response.ok) {
           setIsFavorite(false);
           toast({
-            title: 'Removed from Favorites',
-            description: 'The ad has been removed from your favorites.',
+            title: "Removed from Favorites",
+            description: "The ad has been removed from your favorites.",
           });
         }
       } else {
-        const response = await fetch('/api/favorites', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/favorites", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ adId: ad.id }),
         });
 
         if (response.ok) {
           setIsFavorite(true);
           toast({
-            title: 'Added to Favorites',
-            description: 'The ad has been added to your favorites.',
+            title: "Added to Favorites",
+            description: "The ad has been added to your favorites.",
           });
         }
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -134,19 +144,20 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
   const handleContact = async () => {
     if (!session?.user) {
       toast({
-        title: 'Login Required',
-        description: 'Please login to contact the seller.',
-        variant: 'destructive',
+        title: "Login Required",
+        description: "Please login to contact the seller.",
+        variant: "destructive",
       });
       return;
     }
 
     try {
-      const response = await fetch('/api/chat/conversations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adId: ad.id }),
+      const response = await fetch("/api/chat/conversations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ participantId: session.user.id, adId: ad.id }),
       });
+      console.log("🚀 ~ handleContact ~ response:", response);
 
       if (response.ok) {
         const data = await response.json();
@@ -154,9 +165,9 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to start conversation. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to start conversation. Please try again.",
+        variant: "destructive",
       });
     }
   };
@@ -172,8 +183,8 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
       toast({
-        title: 'Link Copied',
-        description: 'The link has been copied to your clipboard.',
+        title: "Link Copied",
+        description: "The link has been copied to your clipboard.",
       });
     }
   };
@@ -181,9 +192,9 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
   const handleReport = async () => {
     if (!session?.user) {
       toast({
-        title: 'Login Required',
-        description: 'Please login to report this ad.',
-        variant: 'destructive',
+        title: "Login Required",
+        description: "Please login to report this ad.",
+        variant: "destructive",
       });
       return;
     }
@@ -193,13 +204,13 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
 
   const nextImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === ad.images.length - 1 ? 0 : prev + 1
+      prev === ad.images.length - 1 ? 0 : prev + 1,
     );
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === 0 ? ad.images.length - 1 : prev - 1
+      prev === 0 ? ad.images.length - 1 : prev - 1,
     );
   };
 
@@ -225,7 +236,7 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
           <div className="relative bg-gray-100 rounded-lg overflow-hidden">
             <div className="aspect-[4/3] relative">
               <Image
-                src={ad.images[currentImageIndex] || '/images/placeholder.jpg'}
+                src={ad.images[currentImageIndex] || "/images/placeholder.jpg"}
                 alt={ad.title}
                 fill
                 className="object-contain"
@@ -267,8 +278,8 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
                   onClick={() => setCurrentImageIndex(index)}
                   className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
                     index === currentImageIndex
-                      ? 'border-olx-accent'
-                      : 'border-transparent'
+                      ? "border-olx-accent"
+                      : "border-transparent"
                   }`}
                 >
                   <Image
@@ -316,7 +327,7 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
                   >
                     <Heart
                       className={`h-5 w-5 ${
-                        isFavorite ? 'fill-red-500 text-red-500' : ''
+                        isFavorite ? "fill-red-500 text-red-500" : ""
                       }`}
                     />
                   </Button>
@@ -336,8 +347,10 @@ export function AdDetail({ ad, relatedAds, isFavorite: initialIsFavorite, isOwne
 
               {/* Badges */}
               <div className="flex gap-2 mb-6">
-                <Badge variant={ad.condition === 'NEW' ? 'success' : 'secondary'}>
-                  {ad.condition === 'NEW' ? 'New' : 'Used'}
+                <Badge
+                  variant={ad.condition === "NEW" ? "success" : "secondary"}
+                >
+                  {ad.condition === "NEW" ? "New" : "Used"}
                 </Badge>
                 {ad.isFeatured && <Badge variant="featured">Featured</Badge>}
               </div>

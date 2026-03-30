@@ -8,8 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
-import { cities } from "@/lib/cities-areas";
+import { citiesWithAreas, getAreasForCity } from "@/lib/cities-areas";
 
 const requirements = [
   "You must have a registered account",
@@ -23,6 +30,8 @@ export default function CreateStorePage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [availableAreas, setAvailableAreas] = useState<string[]>([]);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -37,6 +46,18 @@ export default function CreateStorePage() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Update areas when city changes
+  useEffect(() => {
+    if (formData.city) {
+      const areas = getAreasForCity(formData.city);
+      setAvailableAreas(areas);
+      // Reset area when city changes
+      setFormData((prev) => ({ ...prev, area: "" }));
+    } else {
+      setAvailableAreas([]);
+    }
+  }, [formData.city]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -169,39 +190,61 @@ export default function CreateStorePage() {
                   />
                 </div>
 
-                {/* Location */}
+                {/* Location - City & Area Selects */}
                 <div className="grid sm:grid-cols-2 gap-6">
+                  {/* City Select */}
                   <div className="space-y-2">
-                    <Label htmlFor="city">
+                    <Label>
                       City <span className="text-red-500">*</span>
                     </Label>
-                    <select
-                      id="city"
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#002f34] focus:border-transparent"
+                    <Select
                       value={formData.city}
-                      onChange={(e) =>
-                        setFormData({ ...formData, city: e.target.value })
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, city: value })
                       }
                       required
                     >
-                      <option value="">Select City</option>
-                      {cities.map((city) => (
-                        <option key={city.name} value={city.name}>
-                          {city.name}
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select City" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {citiesWithAreas.map((cityData) => (
+                          <SelectItem key={cityData.city} value={cityData.city}>
+                            {cityData.city}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
+
+                  {/* Area Select */}
                   <div className="space-y-2">
-                    <Label htmlFor="area">Area</Label>
-                    <Input
-                      id="area"
-                      placeholder="e.g., Gulberg"
+                    <Label>
+                      Area <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
                       value={formData.area}
-                      onChange={(e) =>
-                        setFormData({ ...formData, area: e.target.value })
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, area: value })
                       }
-                    />
+                      disabled={!formData.city || availableAreas.length === 0}
+                      required
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={
+                            !formData.city ? "Select city first" : "Select Area"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableAreas.map((area) => (
+                          <SelectItem key={area} value={area}>
+                            {area}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 

@@ -65,7 +65,7 @@ export default function InterestedStoresPage() {
 
   const handleUnfollow = async (storeId: string) => {
     try {
-      const response = await fetch(`/api/stores/${storeId}/follow`, {
+      const response = await fetch(`/api/stores/follow/${storeId}`, {
         method: 'DELETE',
       });
 

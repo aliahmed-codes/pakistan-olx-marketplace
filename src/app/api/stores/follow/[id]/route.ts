@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 
-// POST /api/stores/[id]/follow - Follow a store
+// POST /api/stores/follow/[id] - Follow a store
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -63,7 +63,7 @@ export async function POST(
   }
 }
 
-// DELETE /api/stores/[id]/follow - Unfollow a store
+// DELETE /api/stores/follow/[id] - Unfollow a store
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -95,7 +95,7 @@ export async function DELETE(
   }
 }
 
-// GET /api/stores/[id]/follow - Check if user follows a store
+// GET /api/stores/follow/[id] - Check if user follows a store
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }

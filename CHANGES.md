@@ -122,9 +122,9 @@ This document summarizes all the changes made to the Pakistan OLX Marketplace pr
 
 ### Stores
 - `GET /api/stores/interested` - Get followed stores
-- `POST /api/stores/[id]/follow` - Follow store
-- `DELETE /api/stores/[id]/follow` - Unfollow store
-- `GET /api/stores/[id]/follow` - Check follow status
+- `POST /api/stores/follow/[id]` - Follow store
+- `DELETE /api/stores/follow/[id]` - Unfollow store
+- `GET /api/stores/follow/[id]` - Check follow status
 
 ### Admin
 - `GET /api/admin/stores` - Get all stores (admin)

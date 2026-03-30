@@ -609,3 +609,5 @@ export function areaExistsInCity(city: string, area: string): boolean {
   const areas = getAreasForCity(city);
   return areas.includes(area);
 }
+
+

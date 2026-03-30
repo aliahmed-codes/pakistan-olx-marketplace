@@ -110,7 +110,7 @@ export default function StoreDetailPage() {
   const checkFollowStatus = async () => {
     if (!store) return;
     try {
-      const response = await fetch(`/api/stores/${store.id}/follow`);
+      const response = await fetch(`/api/stores/follow/${store.id}`);
       const data = await response.json();
       if (data.success) {
         setIsFollowing(data.data.isFollowing);
@@ -131,7 +131,7 @@ export default function StoreDetailPage() {
 
     setIsLoadingFollow(true);
     try {
-      const response = await fetch(`/api/stores/${store.id}/follow`, {
+      const response = await fetch(`/api/stores/follow/${store.id}`, {
         method: isFollowing ? "DELETE" : "POST",
       });
 

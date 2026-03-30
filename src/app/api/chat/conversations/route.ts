@@ -17,14 +17,10 @@ export async function GET() {
 
     const conversations = await prisma.conversation.findMany({
       where: {
-        participants: {
-          some: {
-            id: session.user.id,
-          },
-        },
+
       },
       include: {
-        participants: {
+        user: {
           select: {
             id: true,
             name: true,
@@ -66,7 +62,7 @@ export async function GET() {
         });
 
         // Get the other participant
-        const otherParticipant = conv.participants.find(
+        const otherParticipant = [conv.user].find(
           (p) => p.id !== session.user.id
         );
 
@@ -103,96 +99,109 @@ export async function POST(req: NextRequest) {
       );
     }
 
+
+
     const body = await req.json();
     const { participantId, adId } = body;
 
-    if (!participantId) {
+
+    if (!adId) {
       return NextResponse.json(
-        { success: false, error: 'Participant ID is required' },
+        { success: false, error: 'Ad ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Check if ad exists
+    const ad = await prisma.ad.findUnique({
+      where: { id: adId },
+    });
+
+    if (!ad) {
+      return NextResponse.json(
+        { success: false, error: 'Ad not found' },
+        { status: 404 }
+      );
+    }
+
+    // Prevent user from messaging themselves
+    if (ad.userId === session.user.id) {
+      return NextResponse.json(
+        { success: false, error: 'You cannot message yourself' },
         { status: 400 }
       );
     }
 
     // Check if conversation already exists
-    let conversation = await prisma.conversation.findFirst({
+    const existingConversation = await prisma.conversation.findUnique({
       where: {
-        AND: [
-          {
-            participants: {
-              some: {
-                id: session.user.id,
-              },
-            },
-          },
-          {
-            participants: {
-              some: {
-                id: participantId,
-              },
-            },
-          },
-        ],
-        ...(adId && { adId }),
+        adId_userId: {
+          adId,
+          userId: session.user.id,
+        },
       },
       include: {
-        participants: {
-          select: {
-            id: true,
-            name: true,
-            profileImage: true,
-          },
-        },
         ad: {
           select: {
             id: true,
             title: true,
             images: true,
             price: true,
+            userId: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            profileImage: true,
           },
         },
       },
     });
 
-    // If no conversation exists, create one
-    if (!conversation) {
-      conversation = await prisma.conversation.create({
-        data: {
-          participants: {
-            connect: [
-              { id: session.user.id },
-              { id: participantId },
-            ],
-          },
-          ...(adId && {
-            ad: {
-              connect: { id: adId },
-            },
-          }),
-        },
-        include: {
-          participants: {
-            select: {
-              id: true,
-              name: true,
-              profileImage: true,
-            },
-          },
-          ad: {
-            select: {
-              id: true,
-              title: true,
-              images: true,
-              price: true,
-            },
-          },
-        },
+    if (existingConversation) {
+      return NextResponse.json({
+        success: true,
+        data: existingConversation,
+        message: 'Conversation already exists',
       });
     }
 
-    return NextResponse.json({
-      success: true,
-      data: conversation,
+    // Create new conversation
+    const conversation = await prisma.conversation.create({
+      data: {
+        adId,
+        userId: session.user.id,
+      },
+      include: {
+        ad: {
+          select: {
+            id: true,
+            title: true,
+            images: true,
+            price: true,
+            userId: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            profileImage: true,
+          },
+        },
+      },
     });
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: conversation,
+        message: 'Conversation created successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Create conversation error:', error);
     return NextResponse.json(

@@ -172,7 +172,7 @@ git push -u origin main --force
 | `/api/user/recently-viewed` | GET | Get recently viewed ads |
 | `/api/user/interests` | GET/POST/DELETE | Manage interests |
 | `/api/stores/interested` | GET | Get followed stores |
-| `/api/stores/[id]/follow` | GET/POST/DELETE | Follow/unfollow store |
+| `/api/stores/follow/[id]` | GET/POST/DELETE | Follow/unfollow store |
 | `/api/admin/stores` | GET | Admin: Get all stores |
 | `/api/admin/stores/[id]` | GET/PATCH/DELETE | Admin: Manage store |
 

@@ -1,25 +1,31 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useCallback } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Search, Filter, X, SlidersHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useEffect, useState, useCallback } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { Search, Filter, X, SlidersHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import { AdCard } from '@/components/ads/AdCard';
-import { cities } from '@/lib/utils';
+} from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import { AdCard } from "@/components/ads/AdCard";
+import { cities } from "@/lib/utils";
 
 interface Ad {
   id: string;
@@ -27,7 +33,7 @@ interface Ad {
   price: number;
   images: string[];
   city: string;
-  condition: 'NEW' | 'USED';
+  condition: "NEW" | "USED";
   isFeatured: boolean;
   createdAt: string;
   user: {
@@ -59,18 +65,18 @@ export default function SearchPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
-    search: searchParams.get('search') || '',
-    category: searchParams.get('category') || '',
-    city: searchParams.get('city') || '',
-    condition: searchParams.get('condition') || '',
-    minPrice: searchParams.get('minPrice') || '',
-    maxPrice: searchParams.get('maxPrice') || '',
-    sortBy: searchParams.get('sortBy') || 'newest',
+    search: searchParams.get("search") || "",
+    category: searchParams.get("category") || "",
+    city: searchParams.get("city") || "",
+    condition: searchParams.get("condition") || "",
+    minPrice: searchParams.get("minPrice") || "",
+    maxPrice: searchParams.get("maxPrice") || "",
+    sortBy: searchParams.get("sortBy") || "newest",
   });
 
   // Fetch categories
   useEffect(() => {
-    fetch('/api/categories')
+    fetch("/api/categories")
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -97,7 +103,7 @@ export default function SearchPage() {
         setPagination(data.pagination);
       }
     } catch (error) {
-      console.error('Error fetching ads:', error);
+      console.error("Error fetching ads:", error);
     } finally {
       setIsLoading(false);
     }
@@ -122,15 +128,15 @@ export default function SearchPage() {
 
   const clearFilters = () => {
     setFilters({
-      search: '',
-      category: '',
-      city: '',
-      condition: '',
-      minPrice: '',
-      maxPrice: '',
-      sortBy: 'newest',
+      search: "",
+      category: "",
+      city: "",
+      condition: "",
+      minPrice: "",
+      maxPrice: "",
+      sortBy: "newest",
     });
-    router.push('/search');
+    router.push("/search");
   };
 
   const hasActiveFilters =
@@ -240,7 +246,9 @@ export default function SearchPage() {
           {/* Search Header */}
           <div className="mb-8">
             <h1 className="text-2xl font-bold mb-4">
-              {filters.search ? `Results for "${filters.search}"` : 'Browse Ads'}
+              {filters.search
+                ? `Results for "${filters.search}"`
+                : "Browse Ads"}
             </h1>
 
             {/* Search Bar */}
@@ -295,8 +303,12 @@ export default function SearchPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="newest">Newest First</SelectItem>
-                      <SelectItem value="price_asc">Price: Low to High</SelectItem>
-                      <SelectItem value="price_desc">Price: High to Low</SelectItem>
+                      <SelectItem value="price_asc">
+                        Price: Low to High
+                      </SelectItem>
+                      <SelectItem value="price_desc">
+                        Price: High to Low
+                      </SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -327,9 +339,12 @@ export default function SearchPage() {
                     <Badge
                       variant="secondary"
                       className="cursor-pointer"
-                      onClick={() => updateFilters({ category: '' })}
+                      onClick={() => updateFilters({ category: "" })}
                     >
-                      {categories.find((c) => c.slug === filters.category)?.name}
+                      {
+                        categories.find((c) => c.slug === filters.category)
+                          ?.name
+                      }
                       <X className="h-3 w-3 ml-1" />
                     </Badge>
                   )}
@@ -337,7 +352,7 @@ export default function SearchPage() {
                     <Badge
                       variant="secondary"
                       className="cursor-pointer"
-                      onClick={() => updateFilters({ city: '' })}
+                      onClick={() => updateFilters({ city: "" })}
                     >
                       {filters.city}
                       <X className="h-3 w-3 ml-1" />
@@ -347,9 +362,9 @@ export default function SearchPage() {
                     <Badge
                       variant="secondary"
                       className="cursor-pointer"
-                      onClick={() => updateFilters({ condition: '' })}
+                      onClick={() => updateFilters({ condition: "" })}
                     >
-                      {filters.condition === 'NEW' ? 'New' : 'Used'}
+                      {filters.condition === "NEW" ? "New" : "Used"}
                       <X className="h-3 w-3 ml-1" />
                     </Badge>
                   )}
@@ -377,9 +392,7 @@ export default function SearchPage() {
                       <Button
                         variant="outline"
                         disabled={pagination.page === 1}
-                        onClick={() =>
-                          updateFilters({})
-                        }
+                        onClick={() => updateFilters({})}
                       >
                         Previous
                       </Button>
@@ -389,9 +402,7 @@ export default function SearchPage() {
                       <Button
                         variant="outline"
                         disabled={!pagination.hasMore}
-                        onClick={() =>
-                          updateFilters({})
-                        }
+                        onClick={() => updateFilters({})}
                       >
                         Next
                       </Button>
