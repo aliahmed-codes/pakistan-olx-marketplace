@@ -17,7 +17,10 @@ export async function GET() {
 
     const conversations = await prisma.conversation.findMany({
       where: {
-
+        OR: [
+          { userId: session.user.id },
+          { ad: { userId: session.user.id } },
+        ],
       },
       include: {
         user: {

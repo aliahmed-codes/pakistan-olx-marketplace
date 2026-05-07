@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /d/pakistan-olx-marketplace-versions/03-pakistan-olx-marketplace-main/src/app/\\\\\\(main\\\\\\)/search-1/)",
+      "Bash(ls -la /d/pakistan-olx-marketplace-versions/03-pakistan-olx-marketplace-main/src/app/api/stores/follow/\\\\[id\\\\]/)",
+      "Bash(git -C /d/pakistan-olx-marketplace-versions/03-pakistan-olx-marketplace-main log --oneline -10)",
+      "Bash(git -C /d/pakistan-olx-marketplace-versions/03-pakistan-olx-marketplace-main show HEAD~1:src/app/api/stores/\\\\[id\\\\]/follow/route.ts 2>/dev/null | head -50)",
+      "Bash(cd \"D:/pakistan-olx-marketplace-versions/03-pakistan-olx-marketplace-main\" && npx tsc --noEmit 2>&1 | head -60)",
+      "Bash(cd \"D:/pakistan-olx-marketplace-versions/03-pakistan-olx-marketplace-main\" && node_modules/.bin/tsc --noEmit 2>&1 | head -80)",
+      "Bash(cd \"D:/pakistan-olx-marketplace-versions/03-pakistan-olx-marketplace-main\" && node_modules/.bin/tsc --noEmit 2>&1 | grep -v \"node_modules\" | head -60)",
+      "Bash(cd \"D:/pakistan-olx-marketplace-versions/03-pakistan-olx-marketplace-main\" && node_modules/.bin/tsc --noEmit 2>&1 | grep -v \"node_modules\" | head -50)"
+    ]
+  }
+}

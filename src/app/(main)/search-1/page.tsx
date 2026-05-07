@@ -35,7 +35,7 @@ interface Ad {
   city: string;
   condition: "NEW" | "USED";
   isFeatured: boolean;
-  createdAt: string;
+  createdAt: Date | string;
   user: {
     id: string;
     name: string;
@@ -72,6 +72,7 @@ export default function SearchPage() {
     minPrice: searchParams.get("minPrice") || "",
     maxPrice: searchParams.get("maxPrice") || "",
     sortBy: searchParams.get("sortBy") || "newest",
+    page: searchParams.get("page") || "1",
   });
 
   // Fetch categories
@@ -115,7 +116,9 @@ export default function SearchPage() {
 
   // Update URL when filters change
   const updateFilters = (newFilters: Partial<typeof filters>) => {
-    const updated = { ...filters, ...newFilters };
+    // Reset to page 1 when changing non-page filters
+    const isPageChange = "page" in newFilters;
+    const updated = { ...filters, ...newFilters, ...(!isPageChange && { page: "1" }) };
     setFilters(updated);
 
     const params = new URLSearchParams();
@@ -135,6 +138,7 @@ export default function SearchPage() {
       minPrice: "",
       maxPrice: "",
       sortBy: "newest",
+      page: "1",
     });
     router.push("/search");
   };
@@ -392,7 +396,7 @@ export default function SearchPage() {
                       <Button
                         variant="outline"
                         disabled={pagination.page === 1}
-                        onClick={() => updateFilters({})}
+                        onClick={() => updateFilters({ page: String(pagination.page - 1) })}
                       >
                         Previous
                       </Button>
@@ -402,7 +406,7 @@ export default function SearchPage() {
                       <Button
                         variant="outline"
                         disabled={!pagination.hasMore}
-                        onClick={() => updateFilters({})}
+                        onClick={() => updateFilters({ page: String(pagination.page + 1) })}
                       >
                         Next
                       </Button>
@@ -437,7 +441,7 @@ function Badge({
   className,
   onClick,
 }: {
-  children: React.ReactNode;
+  children: import("react").ReactNode;
   variant?: string;
   className?: string;
   onClick?: () => void;

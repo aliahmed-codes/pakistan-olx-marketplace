@@ -155,9 +155,8 @@ export function AdDetail({
       const response = await fetch("/api/chat/conversations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ participantId: session.user.id, adId: ad.id }),
+        body: JSON.stringify({ participantId: ad.user.id, adId: ad.id }),
       });
-      console.log("🚀 ~ handleContact ~ response:", response);
 
       if (response.ok) {
         const data = await response.json();

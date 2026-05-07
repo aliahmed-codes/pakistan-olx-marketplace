@@ -3,23 +3,35 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
+import Link from "next/link";
 import {
   User,
   Mail,
   Phone,
-  MapPin,
-  Calendar,
   Camera,
   Save,
   Loader2,
+  Package,
+  CheckCircle,
+  Star,
+  Eye,
+  Settings,
+  MessageSquare,
+  Heart,
+  Plus,
+  ChevronRight,
+  Store,
+  Bell,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -31,6 +43,15 @@ interface UserStats {
   featuredAds: number;
   totalViews: number;
 }
+
+const quickLinks = [
+  { label: "My Ads", href: "/my-ads", icon: Package, color: "text-blue-600", bg: "bg-blue-50" },
+  { label: "Favorites", href: "/favorites", icon: Heart, color: "text-red-600", bg: "bg-red-50" },
+  { label: "Messages", href: "/chat", icon: MessageSquare, color: "text-green-600", bg: "bg-green-50" },
+  { label: "My Store", href: "/stores/my-store", icon: Store, color: "text-purple-600", bg: "bg-purple-50" },
+  { label: "Notifications", href: "/notifications", icon: Bell, color: "text-orange-600", bg: "bg-orange-50" },
+  { label: "Settings", href: "/settings", icon: Settings, color: "text-gray-600", bg: "bg-gray-50" },
+];
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -64,7 +85,7 @@ export default function ProfilePage() {
       });
       fetchUserStats();
     }
-  }, [session]);
+  }, [session]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchUserStats = async () => {
     try {
@@ -83,7 +104,6 @@ export default function ProfilePage() {
     if (!file) return;
 
     setIsUploading(true);
-
     const uploadFormData = new FormData();
     uploadFormData.append("file", file);
     uploadFormData.append("folder", "profiles");
@@ -93,21 +113,13 @@ export default function ProfilePage() {
         method: "POST",
         body: uploadFormData,
       });
-
       const data = await response.json();
       if (data.success) {
         setFormData((prev) => ({ ...prev, profileImage: data.data.url }));
-        toast({
-          title: "Image Uploaded",
-          description: "Your profile picture has been updated.",
-        });
+        toast({ title: "Image Uploaded", description: "Profile picture updated." });
       }
-    } catch (error) {
-      toast({
-        title: "Upload Failed",
-        description: "Failed to upload image. Please try again.",
-        variant: "destructive",
-      });
+    } catch {
+      toast({ title: "Upload Failed", description: "Failed to upload image.", variant: "destructive" });
     } finally {
       setIsUploading(false);
     }
@@ -127,32 +139,16 @@ export default function ProfilePage() {
           profileImage: formData.profileImage,
         }),
       });
-
       const data = await response.json();
 
       if (response.ok) {
-        await update({
-          name: formData.name,
-          phone: formData.phone,
-          image: formData.profileImage,
-        });
-        toast({
-          title: "Profile Updated",
-          description: "Your profile has been updated successfully.",
-        });
+        await update({ name: formData.name, phone: formData.phone, image: formData.profileImage });
+        toast({ title: "Profile Updated", description: "Your profile has been updated successfully." });
       } else {
-        toast({
-          title: "Error",
-          description: data.error || "Failed to update profile",
-          variant: "destructive",
-        });
+        toast({ title: "Error", description: data.error || "Failed to update profile", variant: "destructive" });
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
+    } catch {
+      toast({ title: "Error", description: "Something went wrong. Please try again.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -162,310 +158,260 @@ export default function ProfilePage() {
     return (
       <>
         <Navbar />
-        <main className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+        <main className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+            <p className="text-gray-500">Loading your profile...</p>
+          </div>
         </main>
         <Footer />
       </>
     );
   }
 
+  const statCards = [
+    { label: "Total Ads", value: stats?.totalAds ?? 0, icon: Package, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "Active Ads", value: stats?.activeAds ?? 0, icon: CheckCircle, color: "text-green-600", bg: "bg-green-50" },
+    { label: "Featured", value: stats?.featuredAds ?? 0, icon: Star, color: "text-yellow-600", bg: "bg-yellow-50" },
+    { label: "Total Views", value: stats?.totalViews ?? 0, icon: Eye, color: "text-purple-600", bg: "bg-purple-50" },
+  ];
+
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gray-50 py-8">
+      <main className="min-h-screen bg-gray-50">
+        {/* Cover Banner */}
+        <div className="h-40 md:h-56 bg-gradient-to-r from-olx via-olx-light to-[#004d55] relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10"
+            style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }}
+          />
+        </div>
+
         <div className="container mx-auto px-4 max-w-5xl">
-          {/* Profile Header */}
-          <div className="bg-gradient-to-r from-olx to-olx-light rounded-xl p-8 text-white mb-8">
-            <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="relative">
-                <Avatar className="h-24 w-24 border-4 border-white">
-                  <AvatarImage src={formData.profileImage || undefined} />
-                  <AvatarFallback className="bg-white text-olx text-2xl">
-                    {getInitials(formData.name || "U")}
-                  </AvatarFallback>
-                </Avatar>
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0 right-0 bg-white text-olx p-2 rounded-full shadow-lg hover:bg-gray-100"
-                  disabled={isUploading}
-                >
-                  {isUploading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Camera className="h-4 w-4" />
-                  )}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                />
-              </div>
-              <div className="text-center md:text-left">
-                <h1 className="text-2xl font-bold">{formData.name}</h1>
-                <p className="text-white/80">{formData.email}</p>
-                <p className="text-white/60 text-sm mt-1">
-                  {/* Member since {formatDate(session?.user?.email || new Date())} */}
-                  Member since {formatDate(new Date())}
-                </p>
-              </div>
-            </div>
+          {/* Profile Header Card */}
+          <div className="relative -mt-16 mb-8">
+            <Card className="shadow-lg border-0">
+              <CardContent className="p-6 md:p-8">
+                <div className="flex flex-col md:flex-row items-start gap-6">
+                  {/* Avatar */}
+                  <div className="relative flex-shrink-0 -mt-12 md:-mt-16">
+                    <Avatar className="h-24 w-24 md:h-28 md:w-28 border-4 border-white shadow-xl ring-2 ring-olx/20">
+                      <AvatarImage src={formData.profileImage || undefined} />
+                      <AvatarFallback className="bg-olx text-white text-2xl font-bold">
+                        {getInitials(formData.name || "U")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="absolute bottom-0 right-0 bg-olx text-white p-1.5 rounded-full shadow-lg hover:bg-olx-light transition-colors"
+                    >
+                      {isUploading ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Camera className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 pt-2 md:pt-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div>
+                        <h1 className="text-2xl font-bold text-gray-900">{formData.name || "Your Name"}</h1>
+                        <p className="text-gray-500 text-sm">{formData.email}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="secondary" className="text-xs">
+                            <Shield className="h-3 w-3 mr-1" />
+                            Verified User
+                          </Badge>
+                          <span className="text-xs text-gray-400">
+                            Member since {formatDate(new Date())}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Link href="/post-ad">
+                          <Button size="sm" className="bg-olx hover:bg-olx-light gap-1">
+                            <Plus className="h-4 w-4" />
+                            Post Ad
+                          </Button>
+                        </Link>
+                        <Link href="/settings">
+                          <Button size="sm" variant="outline" className="gap-1">
+                            <Settings className="h-4 w-4" />
+                            Settings
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                      {statCards.map((s) => (
+                        <div key={s.label} className={`${s.bg} rounded-lg p-3 text-center`}>
+                          <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+                          <p className="text-xs text-gray-600 mt-0.5">{s.label}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
-          <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2 max-w-md">
-              <TabsTrigger value="profile">Profile</TabsTrigger>
-              <TabsTrigger value="stats">Statistics</TabsTrigger>
-            </TabsList>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-12">
+            {/* Main Content */}
+            <div className="lg:col-span-2">
+              <Tabs defaultValue="profile" className="space-y-4">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="profile">Edit Profile</TabsTrigger>
+                  <TabsTrigger value="activity">Activity</TabsTrigger>
+                </TabsList>
 
-            <TabsContent value="profile">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Edit Profile */}
-                <div className="md:col-span-2">
+                <TabsContent value="profile">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Edit Profile</CardTitle>
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        <User className="h-4 w-4 text-olx" />
+                        Personal Information
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                          <Label htmlFor="name">Full Name</Label>
-                          <div className="relative">
-                            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <Input
-                              id="name"
-                              value={formData.name}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  name: e.target.value,
-                                })
-                              }
-                              className="pl-10"
-                              placeholder="Your full name"
-                            />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <Label htmlFor="name">Full Name</Label>
+                            <div className="relative">
+                              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                              <Input
+                                id="name"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                className="pl-10"
+                                placeholder="Your full name"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <Label htmlFor="phone">Phone Number</Label>
+                            <div className="relative">
+                              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                              <Input
+                                id="phone"
+                                value={formData.phone}
+                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                className="pl-10"
+                                placeholder="03XX-XXXXXXX"
+                              />
+                            </div>
                           </div>
                         </div>
 
-                        <div>
-                          <Label htmlFor="email">Email</Label>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="email">Email Address</Label>
                           <div className="relative">
                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <Input
-                              id="email"
-                              type="email"
-                              value={formData.email}
-                              disabled
-                              className="pl-10 bg-gray-50"
-                            />
+                            <Input id="email" type="email" value={formData.email} disabled className="pl-10 bg-gray-50 cursor-not-allowed" />
                           </div>
-                          <p className="text-sm text-gray-500 mt-1">
-                            Email cannot be changed
-                          </p>
+                          <p className="text-xs text-gray-400">Email address cannot be changed.</p>
                         </div>
 
-                        <div>
-                          <Label htmlFor="phone">Phone Number</Label>
-                          <div className="relative">
-                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <Input
-                              id="phone"
-                              value={formData.phone}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  phone: e.target.value,
-                                })
-                              }
-                              className="pl-10"
-                              placeholder="03XX-XXXXXXX"
-                            />
+                        <Separator />
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Password & Security</p>
+                            <p className="text-xs text-gray-400">Manage your password and security settings</p>
                           </div>
+                          <Link href="/settings?tab=security">
+                            <Button variant="outline" size="sm" className="gap-1">
+                              <Shield className="h-3.5 w-3.5" />
+                              Manage
+                            </Button>
+                          </Link>
                         </div>
 
-                        <Button
-                          type="submit"
-                          className="bg-olx hover:bg-olx-light gap-2"
-                          disabled={isLoading}
-                        >
-                          {isLoading ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Save className="h-4 w-4" />
-                          )}
+                        <Button type="submit" className="bg-olx hover:bg-olx-light gap-2 w-full sm:w-auto" disabled={isLoading}>
+                          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                           Save Changes
                         </Button>
                       </form>
                     </CardContent>
                   </Card>
-                </div>
+                </TabsContent>
 
-                {/* Quick Links */}
-                <div>
+                <TabsContent value="activity">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Quick Links</CardTitle>
+                      <CardTitle className="text-base">Recent Activity</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-2">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                        onClick={() => router.push("/my-ads")}
-                      >
-                        My Ads
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                        onClick={() => router.push("/favorites")}
-                      >
-                        Favorites
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                        onClick={() => router.push("/chat")}
-                      >
-                        Messages
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                        onClick={() => router.push("/post-ad")}
-                      >
-                        Post New Ad
-                      </Button>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {[
+                          { icon: Package, color: "text-blue-600 bg-blue-50", label: "You posted a new ad", time: "2 hours ago" },
+                          { icon: Eye, color: "text-purple-600 bg-purple-50", label: "Your ad received 12 views", time: "5 hours ago" },
+                          { icon: MessageSquare, color: "text-green-600 bg-green-50", label: "New message from Ahmed", time: "1 day ago" },
+                          { icon: Heart, color: "text-red-600 bg-red-50", label: "Someone favorited your ad", time: "2 days ago" },
+                          { icon: Star, color: "text-yellow-600 bg-yellow-50", label: "Your ad was featured", time: "3 days ago" },
+                        ].map((item, i) => (
+                          <div key={i} className="flex items-center gap-3">
+                            <div className={`p-2 rounded-full ${item.color.split(" ")[1]}`}>
+                              <item.icon className={`h-4 w-4 ${item.color.split(" ")[0]}`} />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-800">{item.label}</p>
+                              <p className="text-xs text-gray-400">{item.time}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </CardContent>
                   </Card>
-                </div>
+                </TabsContent>
+              </Tabs>
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-4">
+              {/* Quick Actions */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {quickLinks.map((link) => (
+                    <Link key={link.href} href={link.href}>
+                      <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group">
+                        <div className={`p-2 rounded-lg ${link.bg}`}>
+                          <link.icon className={`h-4 w-4 ${link.color}`} />
+                        </div>
+                        <span className="text-sm font-medium text-gray-700 group-hover:text-olx flex-1">
+                          {link.label}
+                        </span>
+                        <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-olx" />
+                      </div>
+                    </Link>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Promote Banner */}
+              <div className="bg-gradient-to-br from-olx-yellow/30 to-olx-yellow/10 rounded-xl p-4 border border-olx-yellow/30">
+                <Star className="h-6 w-6 text-olx-yellow mb-2" />
+                <p className="font-semibold text-gray-800 mb-1">Feature Your Ads</p>
+                <p className="text-xs text-gray-600 mb-3">Get 10x more views with a featured listing</p>
+                <Link href="/my-ads">
+                  <Button size="sm" className="bg-olx-yellow text-olx hover:bg-olx-yellow/90 w-full text-xs font-semibold">
+                    Promote Now
+                  </Button>
+                </Link>
               </div>
-            </TabsContent>
-
-            <TabsContent value="stats">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-blue-100 rounded-lg">
-                        <svg
-                          className="h-6 w-6 text-blue-600"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                          />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Total Ads</p>
-                        <p className="text-2xl font-bold">
-                          {stats?.totalAds || 0}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-green-100 rounded-lg">
-                        <svg
-                          className="h-6 w-6 text-green-600"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Active Ads</p>
-                        <p className="text-2xl font-bold">
-                          {stats?.activeAds || 0}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-yellow-100 rounded-lg">
-                        <svg
-                          className="h-6 w-6 text-yellow-600"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-                          />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Featured Ads</p>
-                        <p className="text-2xl font-bold">
-                          {stats?.featuredAds || 0}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-purple-100 rounded-lg">
-                        <svg
-                          className="h-6 w-6 text-purple-600"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Total Views</p>
-                        <p className="text-2xl font-bold">
-                          {stats?.totalViews || 0}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
         </div>
       </main>
       <Footer />

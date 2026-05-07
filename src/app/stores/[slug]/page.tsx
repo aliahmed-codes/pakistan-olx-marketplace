@@ -79,13 +79,13 @@ export default function StoreDetailPage() {
 
   useEffect(() => {
     fetchStore();
-  }, [slug]);
+  }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (session?.user && store) {
       checkFollowStatus();
     }
-  }, [session, store]);
+  }, [session, store]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchStore = async () => {
     try {
@@ -157,17 +157,24 @@ export default function StoreDetailPage() {
 
     if (!store) return;
 
+    if (ads.length === 0) {
+      toast.error("This store has no ads to start a conversation with");
+      return;
+    }
+
     try {
-      // Create or get conversation with store owner
+      // Create or get conversation using the store's first ad
       const response = await fetch("/api/chat/conversations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ participantId: store.owner.id }),
+        body: JSON.stringify({ participantId: store.owner.id, adId: ads[0].id }),
       });
 
       const data = await response.json();
       if (data.success) {
         router.push(`/chat?conversation=${data.data.id}`);
+      } else {
+        toast.error(data.error || "Failed to start chat");
       }
     } catch (error) {
       toast.error("Failed to start chat");
@@ -211,7 +218,7 @@ export default function StoreDetailPage() {
         <main className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Store Not Found</h1>
-            <p className="text-gray-600 mb-4">The store you're looking for doesn't exist.</p>
+            <p className="text-gray-600 mb-4">The store you&apos;re looking for doesn&apos;t exist.</p>
             <Link href="/stores">
               <Button>Browse All Stores</Button>
             </Link>
@@ -345,7 +352,7 @@ export default function StoreDetailPage() {
                 <div className="bg-white rounded-lg p-8 text-center">
                   <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">No ads yet</h3>
-                  <p className="text-gray-600">This store hasn't posted any ads yet.</p>
+                  <p className="text-gray-600">This store hasn&apos;t posted any ads yet.</p>
                 </div>
               ) : (
                 <div className="grid sm:grid-cols-2 gap-4">

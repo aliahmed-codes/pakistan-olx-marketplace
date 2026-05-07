@@ -593,6 +593,9 @@ export function getAllCities(): string[] {
   return citiesWithAreas.map((c) => c.city);
 }
 
+// Convenience export for city names array
+export const cities: string[] = citiesWithAreas.map((c) => c.city);
+
 // Get areas for a city
 export function getAreasForCity(city: string): string[] {
   const cityData = citiesWithAreas.find((c) => c.city === city);

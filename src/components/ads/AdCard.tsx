@@ -19,7 +19,7 @@ interface AdCardProps {
     city: string;
     condition: 'NEW' | 'USED';
     isFeatured: boolean;
-    createdAt: Date;
+    createdAt: Date | string;
     user: {
       id: string;
       name: string;

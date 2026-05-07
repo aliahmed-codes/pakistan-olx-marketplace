@@ -22,7 +22,7 @@ interface Favorite {
     city: string;
     condition: 'NEW' | 'USED';
     isFeatured: boolean;
-    createdAt: string;
+    createdAt: Date | string;
     user: {
       id: string;
       name: string;

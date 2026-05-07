@@ -111,8 +111,8 @@ export default function StoresPage() {
               >
                 <option value="">All Cities</option>
                 {cities.map((city) => (
-                  <option key={city.name} value={city.name}>
-                    {city.name}
+                  <option key={city} value={city}>
+                    {city}
                   </option>
                 ))}
               </select>
@@ -234,16 +234,16 @@ export default function StoresPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {cities.slice(0, 12).map((city, index) => (
               <motion.div
-                key={city.name}
+                key={city}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <Link href={`/stores?city=${city.name}`}>
+                <Link href={`/stores?city=${city}`}>
                   <div className="bg-gray-50 hover:bg-[#002f34] hover:text-white rounded-lg p-4 text-center transition-all cursor-pointer">
                     <MapPin className="w-6 h-6 mx-auto mb-2" />
-                    <span className="text-sm font-medium">{city.name}</span>
+                    <span className="text-sm font-medium">{city}</span>
                   </div>
                 </Link>
               </motion.div>

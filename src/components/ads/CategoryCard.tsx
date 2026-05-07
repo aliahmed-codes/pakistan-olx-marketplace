@@ -43,7 +43,7 @@ export function CategoryCard({ category, adCount }: CategoryCardProps) {
   const Icon = category.icon ? iconMap[category.icon] : null;
 
   return (
-    <Link href={`/category/${category.slug}`}>
+    <Link href={`/categories/${category.slug}`}>
       <div className="category-card flex flex-col items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-olx-accent hover:shadow-md transition-all duration-300">
         {/* Icon */}
         <div className="w-16 h-16 rounded-full bg-olx/5 flex items-center justify-center mb-3">
