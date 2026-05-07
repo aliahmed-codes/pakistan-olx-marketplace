@@ -4,26 +4,26 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Plus, Edit2, Trash2, Star, MessageSquare, Eye } from 'lucide-react';
+import {
+  Package, Plus, Edit2, Trash2, Star,
+  MessageSquare, Eye, MapPin, Clock,
+  AlertCircle, CheckCircle2,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  Dialog, DialogContent, DialogDescription,
+  DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { formatPrice, formatRelativeTime } from '@/lib/utils';
 import Image from 'next/image';
+
+// ── Types ──────────────────────────────────────────────────────────────────────
 
 interface Ad {
   id: string;
@@ -35,17 +35,22 @@ interface Ad {
   isApproved: boolean;
   isFeatured: boolean;
   featuredUntil: string | null;
-  status: string;
+  views: number;
   createdAt: string;
-  category: {
-    name: string;
-    slug: string;
-  };
-  _count: {
-    conversations: number;
-    favorites: number;
-  };
+  category: { name: string; slug: string };
+  _count: { conversations: number; favorites: number };
 }
+
+// ── Tabs config ────────────────────────────────────────────────────────────────
+
+const TABS = [
+  { value: 'all',      label: 'All Ads'  },
+  { value: 'active',   label: 'Active'   },
+  { value: 'pending',  label: 'Pending'  },
+  { value: 'featured', label: 'Featured' },
+] as const;
+
+// ── Component ──────────────────────────────────────────────────────────────────
 
 export default function MyAdsPage() {
   const router = useRouter();
@@ -54,254 +59,246 @@ export default function MyAdsPage() {
 
   const [ads, setAds] = useState<Ad[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('all');
-  const [adToDelete, setAdToDelete] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<typeof TABS[number]['value']>('all');
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login?callbackUrl=/my-ads');
-    }
+    if (status === 'unauthenticated') router.push('/login?callbackUrl=/my-ads');
   }, [status, router]);
 
   useEffect(() => {
-    if (session?.user) {
-      fetchAds();
-    }
-  }, [session, activeTab]);
+    if (session?.user) fetchAds();
+  }, [session, activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAds = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/ads/my-ads?status=${activeTab}`);
-      const data = await response.json();
-      if (data.success) {
-        setAds(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching ads:', error);
+      const res = await fetch(`/api/ads/my-ads?status=${activeTab}&limit=50`);
+      const data = await res.json();
+      if (data.success) setAds(data.data);
+    } catch (err) {
+      console.error('Error fetching ads:', err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDelete = async (adId: string) => {
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setIsDeleting(true);
     try {
-      const response = await fetch(`/api/ads/${adId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        toast({
-          title: 'Ad Deleted',
-          description: 'Your ad has been deleted successfully.',
-        });
-        fetchAds();
+      const res = await fetch(`/api/ads/${deleteId}`, { method: 'DELETE' });
+      if (res.ok) {
+        toast({ title: 'Ad deleted', description: 'Your ad has been deleted.' });
+        setAds((prev) => prev.filter((a) => a.id !== deleteId));
       } else {
-        toast({
-          title: 'Error',
-          description: 'Failed to delete ad. Please try again.',
-          variant: 'destructive',
-        });
+        toast({ title: 'Error', description: 'Failed to delete ad.', variant: 'destructive' });
       }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+    } catch {
+      toast({ title: 'Error', description: 'Something went wrong.', variant: 'destructive' });
     } finally {
-      setAdToDelete(null);
+      setIsDeleting(false);
+      setDeleteId(null);
     }
   };
+
+  // ── Loading ────────────────────────────────────────────────────────────────
 
   if (status === 'loading') {
     return (
       <>
         <Navbar />
-        <main className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
+        <main className="min-h-screen bg-[#f5f6fa] py-8">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-72 rounded-2xl" />)}
+            </div>
+          </div>
         </main>
         <Footer />
       </>
     );
   }
 
+  // ── Render ─────────────────────────────────────────────────────────────────
+
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gray-50 py-8">
-        <div className="container mx-auto px-4">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-3xl font-bold">My Ads</h1>
-              <p className="text-gray-500 mt-1">Manage your listings</p>
+      <main className="min-h-screen bg-[#f5f6fa]">
+        {/* Hero header */}
+        <div className="bg-gradient-to-br from-pm to-pm-light text-white py-10 relative overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle, rgba(35,229,219,1) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+          <div className="container mx-auto px-4 relative">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-extrabold mb-1">My Ads</h1>
+                <p className="text-white/70">Manage and track your listings</p>
+              </div>
+              <Link href="/post-ad">
+                <Button className="bg-pm-yellow text-pm hover:bg-pm-yellow/90 gap-2 font-bold rounded-full px-6 shadow-lg">
+                  <Plus className="h-4 w-4" /> Post New Ad
+                </Button>
+              </Link>
             </div>
-            <Link href="/post-ad">
-              <Button className="bg-pm hover:bg-pm-light gap-2">
-                <Plus className="h-4 w-4" />
-                Post New Ad
-              </Button>
-            </Link>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 py-8">
+          {/* Tabs */}
+          <div className="flex gap-2 overflow-x-auto scrollbar-none mb-6 pb-1">
+            {TABS.map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setActiveTab(tab.value)}
+                className={`shrink-0 px-5 py-2 rounded-full text-sm font-semibold transition-all ${
+                  activeTab === tab.value
+                    ? 'bg-pm text-white shadow-sm'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                }`}
+              >
+                {tab.label}
+                {!isLoading && activeTab === tab.value && ads.length > 0 && (
+                  <span className="ml-1.5 text-xs opacity-75">({ads.length})</span>
+                )}
+              </button>
+            ))}
           </div>
 
-          {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-6">
-              <TabsTrigger value="all">All Ads</TabsTrigger>
-              <TabsTrigger value="active">Active</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-              <TabsTrigger value="featured">Featured</TabsTrigger>
-            </TabsList>
+          {/* Content */}
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-72 rounded-2xl" />)}
+            </div>
+          ) : ads.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {ads.map((ad) => (
+                <div key={ad.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all group">
+                  {/* Image */}
+                  <div className="relative aspect-video overflow-hidden bg-gray-100">
+                    {ad.images[0] ? (
+                      <Image
+                        src={ad.images[0]}
+                        alt={ad.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-4xl text-gray-200">📦</div>
+                    )}
+                    {/* Badges */}
+                    <div className="absolute top-2 left-2 flex gap-1.5">
+                      {!ad.isApproved && (
+                        <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <AlertCircle className="h-2.5 w-2.5" /> Pending
+                        </span>
+                      )}
+                      {ad.isApproved && !ad.isFeatured && (
+                        <span className="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <CheckCircle2 className="h-2.5 w-2.5" /> Active
+                        </span>
+                      )}
+                      {ad.isFeatured && (
+                        <span className="bg-pm-yellow text-pm text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <Star className="h-2.5 w-2.5 fill-pm" /> Featured
+                        </span>
+                      )}
+                    </div>
+                    {/* Condition */}
+                    <span className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] font-medium px-2 py-0.5 rounded-full backdrop-blur-sm">
+                      {ad.condition === 'NEW' ? 'New' : 'Used'}
+                    </span>
+                  </div>
 
-            <TabsContent value={activeTab}>
-              {isLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[...Array(6)].map((_, i) => (
-                    <Skeleton key={i} className="h-64" />
-                  ))}
-                </div>
-              ) : ads.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {ads.map((ad) => (
-                    <Card key={ad.id} className="overflow-hidden">
-                      <div className="relative aspect-video">
-                        <Image
-                          src={ad.images[0] || '/images/placeholder.jpg'}
-                          alt={ad.title}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute top-2 left-2 flex gap-2">
-                          {!ad.isApproved && (
-                            <Badge variant="warning">Pending</Badge>
-                          )}
-                          {ad.isFeatured && (
-                            <Badge variant="featured">Featured</Badge>
-                          )}
-                        </div>
-                      </div>
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <p className="font-bold text-lg text-pm">
-                              {formatPrice(ad.price)}
-                            </p>
-                            <h3 className="font-medium line-clamp-1">{ad.title}</h3>
-                          </div>
-                        </div>
+                  {/* Body */}
+                  <div className="p-4">
+                    <p className="text-lg font-extrabold text-pm">{formatPrice(ad.price)}</p>
+                    <h3 className="font-semibold text-gray-900 line-clamp-1 text-sm mb-2">{ad.title}</h3>
 
-                        <p className="text-sm text-gray-500 mb-3">
-                          {ad.city} • {formatRelativeTime(ad.createdAt)}
-                        </p>
+                    {/* Meta */}
+                    <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+                      <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {ad.city}</span>
+                      <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {formatRelativeTime(ad.createdAt)}</span>
+                    </div>
 
-                        <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                          <span className="flex items-center gap-1">
-                            <Eye className="h-4 w-4" />
-                            {ad._count.favorites}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MessageSquare className="h-4 w-4" />
-                            {ad._count.conversations}
-                          </span>
-                        </div>
+                    {/* Stats row */}
+                    <div className="flex items-center gap-4 text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2 mb-3">
+                      <span className="flex items-center gap-1 font-medium">
+                        <Eye className="h-3.5 w-3.5 text-blue-400" /> {ad.views} views
+                      </span>
+                      <span className="flex items-center gap-1 font-medium">
+                        <MessageSquare className="h-3.5 w-3.5 text-green-400" /> {ad._count.conversations} chats
+                      </span>
+                      <span className="flex items-center gap-1 font-medium">
+                        <Star className="h-3.5 w-3.5 text-rose-400" /> {ad._count.favorites} saves
+                      </span>
+                    </div>
 
-                        <div className="flex gap-2">
-                          <Link href={`/edit-ad/${ad.id}`} className="flex-1">
-                            <Button variant="outline" size="sm" className="w-full gap-1">
-                              <Edit2 className="h-4 w-4" />
-                              Edit
+                    {/* Action buttons */}
+                    <div className="flex gap-2">
+                      <Link href={`/edit-ad/${ad.id}`} className="flex-1">
+                        <Button variant="outline" size="sm" className="w-full gap-1 text-xs rounded-full">
+                          <Edit2 className="h-3.5 w-3.5" /> Edit
+                        </Button>
+                      </Link>
+                      {!ad.isFeatured && ad.isApproved && (
+                        <Link href={`/feature-ad/${ad.id}`} className="flex-1">
+                          <Button size="sm" className="w-full gap-1 bg-pm-yellow text-pm hover:bg-pm-yellow/90 text-xs rounded-full font-bold">
+                            <Star className="h-3.5 w-3.5" /> Feature
+                          </Button>
+                        </Link>
+                      )}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50 border-red-200 rounded-full px-3"
+                            onClick={() => setDeleteId(ad.id)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Delete Ad</DialogTitle>
+                            <DialogDescription>
+                              Are you sure you want to delete &quot;{ad.title}&quot;? This action cannot be undone.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter>
+                            <Button variant="outline" onClick={() => setDeleteId(null)}>Cancel</Button>
+                            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+                              {isDeleting ? 'Deleting...' : 'Delete'}
                             </Button>
-                          </Link>
-                          {!ad.isFeatured && ad.isApproved && (
-                            <Link href={`/feature-ad/${ad.id}`} className="flex-1">
-                              <Button size="sm" className="w-full gap-1 bg-pm-yellow text-pm hover:bg-pm-yellow/90">
-                                <Star className="h-4 w-4" />
-                                Feature
-                              </Button>
-                            </Link>
-                          )}
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-red-500 hover:text-red-600"
-                                onClick={() => setAdToDelete(ad.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Delete Ad</DialogTitle>
-                                <DialogDescription>
-                                  Are you sure you want to delete this ad? This action cannot be undone.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter>
-                                <Button
-                                  variant="outline"
-                                  onClick={() => setAdToDelete(null)}
-                                >
-                                  Cancel
-                                </Button>
-                                <Button
-                                  variant="destructive"
-                                  onClick={() => handleDelete(ad.id)}
-                                >
-                                  Delete
-                                </Button>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <Card className="text-center py-16">
-                  <CardContent>
-                    <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h2 className="text-xl font-semibold mb-2">No ads found</h2>
-                    <p className="text-gray-500 mb-6">
-                      You haven&apos;t posted any ads yet
-                    </p>
-                    <Link href="/post-ad">
-                      <Button className="bg-pm hover:bg-pm-light gap-2">
-                        <Plus className="h-4 w-4" />
-                        Post Your First Ad
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
-          </Tabs>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
+              <Package className="h-16 w-16 text-gray-200 mx-auto mb-4" />
+              <h2 className="text-xl font-bold text-gray-900 mb-2">No ads found</h2>
+              <p className="text-gray-500 mb-6">
+                {activeTab === 'all'
+                  ? "You haven't posted any ads yet."
+                  : `No ${activeTab} ads at the moment.`}
+              </p>
+              <Link href="/post-ad">
+                <Button className="bg-pm hover:bg-pm-light gap-2 rounded-full px-8">
+                  <Plus className="h-4 w-4" /> Post Your First Ad
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </main>
       <Footer />
     </>
-  );
-}
-
-function Package({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="m7.5 4.27 9 5.15" />
-      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
-      <path d="m3.3 7 8.7 5 8.7-5" />
-      <path d="M12 22V12" />
-    </svg>
   );
 }
