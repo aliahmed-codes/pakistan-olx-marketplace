@@ -474,7 +474,7 @@ function DownloadAppSection() {
               Available Now
             </p>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4 leading-tight">
-              Get the PakistanMarket<br className="hidden md:block" /> App
+              Get the <span className="text-pm-accent">Pakistan Market</span> App
             </h2>
             <p className="text-gray-300 mb-8 max-w-sm mx-auto md:mx-0">
               Buy, sell, and chat on the go. Download our app and never miss a
@@ -483,21 +483,21 @@ function DownloadAppSection() {
             <div className="flex flex-wrap gap-3 justify-center md:justify-start">
               <a
                 href="#"
-                className="inline-flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 px-5 py-3 backdrop-blur-sm transition-all hover:bg-white/20"
+                className="inline-flex items-center gap-3 rounded-xl bg-pm-accent/20 border border-pm-accent/40 px-5 py-3 transition-all hover:bg-pm-accent/30 hover:border-pm-accent/60"
               >
                 <span className="text-2xl">🍎</span>
                 <div className="text-left">
-                  <p className="text-[10px] text-gray-400 uppercase">Download on the</p>
+                  <p className="text-[10px] text-pm-accent/70 uppercase tracking-wider">Download on the</p>
                   <p className="text-sm font-bold text-white">App Store</p>
                 </div>
               </a>
               <a
                 href="#"
-                className="inline-flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 px-5 py-3 backdrop-blur-sm transition-all hover:bg-white/20"
+                className="inline-flex items-center gap-3 rounded-xl bg-pm-accent/20 border border-pm-accent/40 px-5 py-3 transition-all hover:bg-pm-accent/30 hover:border-pm-accent/60"
               >
                 <span className="text-2xl">▶️</span>
                 <div className="text-left">
-                  <p className="text-[10px] text-gray-400 uppercase">Get it on</p>
+                  <p className="text-[10px] text-pm-accent/70 uppercase tracking-wider">Get it on</p>
                   <p className="text-sm font-bold text-white">Google Play</p>
                 </div>
               </a>
@@ -515,7 +515,7 @@ function DownloadAppSection() {
                   <div className="h-1.5 w-16 rounded-full bg-white/20" />
                 </div>
                 <span className="text-6xl">📱</span>
-                <p className="mt-3 text-xs font-bold text-pm-accent">PakistanMarket</p>
+                <p className="mt-3 text-xs font-bold text-pm-accent">Pakistan Market</p>
               </div>
             </div>
           </div>

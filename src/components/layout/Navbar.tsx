@@ -40,18 +40,21 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { getInitials } from '@/lib/utils';
 
-// ---------------------------------------------------------------------------
-// Category shortcuts shown below the main nav bar
-// ---------------------------------------------------------------------------
-const CATEGORIES = [
-  { label: 'Mobiles',     slug: 'mobiles',                          icon: Smartphone },
-  { label: 'Cars',        slug: 'vehicles',                         icon: Car },
-  { label: 'Property',    slug: 'property-for-sale',                icon: Building2 },
-  { label: 'Electronics', slug: 'electronics-home-appliances',      icon: Tv },
-  { label: 'Bikes',       slug: 'bikes',                            icon: Bike },
-  { label: 'Jobs',        slug: 'jobs',                             icon: Briefcase },
-  { label: 'Services',    slug: 'services',                         icon: Wrench },
-] as const;
+// Icon map for dynamic categories fetched from API
+const ICON_MAP: Record<string, React.ElementType> = {
+  Smartphone, Car, Building2, Tv, Bike, Briefcase, Wrench,
+};
+
+// Fallback static list shown before API responds (prevents layout shift)
+const FALLBACK_CATEGORIES = [
+  { label: 'Mobiles',     slug: 'mobiles',     icon: Smartphone },
+  { label: 'Cars',        slug: 'vehicles',    icon: Car },
+  { label: 'Property',    slug: 'property-for-sale', icon: Building2 },
+  { label: 'Electronics', slug: 'electronics-home-appliances', icon: Tv },
+  { label: 'Bikes',       slug: 'bikes',       icon: Bike },
+  { label: 'Jobs',        slug: 'jobs',        icon: Briefcase },
+  { label: 'Services',    slug: 'services',    icon: Wrench },
+];
 
 // ---------------------------------------------------------------------------
 // Reusable badge that shows a numeric count
@@ -68,11 +71,14 @@ function CountBadge({ count }: { count: number }) {
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
+interface ApiCategory { id: string; name: string; slug: string; icon?: string; }
+
 export default function Navbar() {
   const { data: session } = useSession();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  const [navCategories, setNavCategories] = useState(FALLBACK_CATEGORIES);
 
   const user = session?.user;
 
@@ -81,6 +87,24 @@ export default function Navbar() {
     const onScroll = () => setScrolled(window.scrollY > 4);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Fetch categories dynamically from API
+  useEffect(() => {
+    fetch('/api/categories?limit=8')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.data?.length > 0) {
+          setNavCategories(
+            data.data.slice(0, 8).map((c: ApiCategory) => ({
+              label: c.name,
+              slug: c.slug,
+              icon: ICON_MAP[c.icon || ''] || Smartphone,
+            }))
+          );
+        }
+      })
+      .catch(() => {/* keep fallback */});
   }, []);
 
   // Poll for unread message count every 30 seconds
@@ -141,7 +165,7 @@ export default function Navbar() {
                 <form action="/search" className="relative">
                   <input
                     type="text"
-                    name="search"
+                    name="q"
                     placeholder="Search mobiles, cars, properties, electronics…"
                     className="w-full h-10 pl-10 pr-4 rounded-full border-2 border-transparent bg-white/10 text-white placeholder-white/50 focus:outline-none focus:border-pm-accent focus:bg-white/20 transition-all"
                   />
@@ -289,13 +313,13 @@ export default function Navbar() {
                     <Link href="/login">
                       <Button
                         variant="ghost"
-                        className="text-white hover:bg-white/10 font-medium"
+                        className="text-white/90 hover:text-white hover:bg-white/10 font-medium border border-white/20 hover:border-white/40 transition-all"
                       >
                         Login
                       </Button>
                     </Link>
                     <Link href="/register">
-                      <Button className="bg-pm-accent text-pm font-semibold hover:bg-pm-accent/90 rounded-full px-5">
+                      <Button className="bg-pm-yellow text-pm font-bold hover:bg-pm-yellow/90 rounded-full px-5 shadow-sm">
                         Register
                       </Button>
                     </Link>
@@ -358,11 +382,11 @@ export default function Navbar() {
                       <p className="mt-2 mb-1 px-2 text-xs font-semibold uppercase tracking-widest text-gray-400">
                         Categories
                       </p>
-                      {CATEGORIES.map(({ label, slug, icon: Icon }) => (
+                      {navCategories.map(({ label, slug, icon: Icon }) => (
                         <Link
                           key={slug}
                           href={`/search?category=${slug}`}
-                          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-pm/5 hover:text-pm transition-colors"
                         >
                           <Icon className="h-4 w-4 text-pm shrink-0" />
                           {label}
@@ -463,7 +487,7 @@ export default function Navbar() {
                     <form action="/search" className="relative">
                       <input
                         type="text"
-                        name="search"
+                        name="q"
                         autoFocus
                         placeholder="Search for anything…"
                         className="w-full h-10 pl-10 pr-4 rounded-full border-2 border-pm-accent/60 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:border-pm-accent transition-all"
@@ -482,16 +506,22 @@ export default function Navbar() {
           <div className="container mx-auto px-4">
             {/* On mobile this scrolls horizontally; on desktop it's a row */}
             <div className="flex items-center gap-1 overflow-x-auto scrollbar-none py-1">
-              {CATEGORIES.map(({ label, slug, icon: Icon }) => (
+              {navCategories.map(({ label, slug, icon: Icon }) => (
                 <Link
                   key={slug}
                   href={`/search?category=${slug}`}
-                  className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10 hover:text-pm-accent transition-all whitespace-nowrap"
+                  className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-pm-accent/20 hover:text-pm-accent transition-all whitespace-nowrap"
                 >
                   <Icon className="h-3.5 w-3.5" />
                   {label}
                 </Link>
               ))}
+              <Link
+                href="/categories"
+                className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-pm-accent/80 hover:bg-pm-accent/20 hover:text-pm-accent transition-all whitespace-nowrap ml-auto"
+              >
+                All Categories →
+              </Link>
             </div>
           </div>
         </div>
