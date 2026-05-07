@@ -60,7 +60,7 @@ export default function CategoriesPage() {
       <Navbar />
       <main className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-olx to-olx-light text-white">
+        <div className="bg-gradient-to-r from-pm to-pm-light text-white">
           <div className="container mx-auto px-4 py-12">
             <h1 className="text-4xl font-bold mb-4">Browse Categories</h1>
             <p className="text-white/80 max-w-2xl">
@@ -84,7 +84,7 @@ export default function CategoriesPage() {
                       <Icon className="w-12 h-12 text-white" />
                     </div>
                     <div className="p-6">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-olx transition-colors">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-pm transition-colors">
                         {category.name}
                       </h3>
                       <p className="text-gray-500 text-sm mb-4 line-clamp-2">
@@ -94,7 +94,7 @@ export default function CategoriesPage() {
                         <span className="text-sm text-gray-400">
                           {category.subCategories.length} subcategories
                         </span>
-                        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-olx group-hover:translate-x-1 transition-all" />
+                        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-pm group-hover:translate-x-1 transition-all" />
                       </div>
                     </div>
                   </div>
@@ -107,13 +107,13 @@ export default function CategoriesPage() {
         {/* CTA Section */}
         <div className="bg-white border-t">
           <div className="container mx-auto px-4 py-12">
-            <div className="bg-gradient-to-r from-olx to-olx-light rounded-2xl p-8 text-center text-white">
+            <div className="bg-gradient-to-r from-pm to-pm-light rounded-2xl p-8 text-center text-white">
               <h2 className="text-2xl font-bold mb-2">Want to Sell Something?</h2>
               <p className="text-white/80 mb-6">
                 Post your ad for free and reach thousands of potential buyers
               </p>
               <Link href="/post-ad">
-                <Button className="bg-white text-olx hover:bg-gray-100">
+                <Button className="bg-white text-pm hover:bg-gray-100">
                   Post Free Ad
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>

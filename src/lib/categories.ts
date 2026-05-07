@@ -1,5 +1,5 @@
 // Categories and Sub-categories for Pakistan Marketplace
-// Based on OLX Pakistan structure
+// Based on pm Pakistan structure
 
 export interface SubCategory {
   id: string;

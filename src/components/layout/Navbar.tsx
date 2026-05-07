@@ -114,24 +114,24 @@ export default function Navbar() {
         )}
       >
         {/* ---- Announcement bar ----------------------------------------- */}
-        <div className="bg-olx-yellow text-olx text-center text-xs font-semibold py-1.5 px-4 tracking-wide">
+        <div className="bg-pm-yellow text-pm text-center text-xs font-semibold py-1.5 px-4 tracking-wide">
           🇵🇰 Pakistan&apos;s #1 Free Classified Marketplace — Post Ads for Free!
         </div>
 
         {/* ---- Main nav bar ---------------------------------------------- */}
-        <div className="bg-olx text-white">
+        <div className="bg-pm text-white">
           <div className="container mx-auto px-4">
             <div className="flex h-16 items-center justify-between gap-4">
 
               {/* Logo */}
               <Link href="/" className="flex shrink-0 items-center gap-2 group">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-olx-accent/20 ring-1 ring-olx-accent/40 transition-all group-hover:bg-olx-accent/30">
-                  <ShoppingBag className="h-5 w-5 text-olx-accent" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-pm-accent/20 ring-1 ring-pm-accent/40 transition-all group-hover:bg-pm-accent/30">
+                  <ShoppingBag className="h-5 w-5 text-pm-accent" />
                 </div>
                 <span className="text-xl font-extrabold tracking-tight text-white">
                   Pakistan
                 </span>
-                <span className="text-xl font-extrabold tracking-tight text-olx-accent">
+                <span className="text-xl font-extrabold tracking-tight text-pm-accent">
                   Market
                 </span>
               </Link>
@@ -143,7 +143,7 @@ export default function Navbar() {
                     type="text"
                     name="search"
                     placeholder="Search mobiles, cars, properties, electronics…"
-                    className="w-full h-10 pl-10 pr-4 rounded-full border-2 border-transparent bg-white/10 text-white placeholder-white/50 focus:outline-none focus:border-olx-accent focus:bg-white/20 transition-all"
+                    className="w-full h-10 pl-10 pr-4 rounded-full border-2 border-transparent bg-white/10 text-white placeholder-white/50 focus:outline-none focus:border-pm-accent focus:bg-white/20 transition-all"
                   />
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60" />
                 </form>
@@ -165,7 +165,7 @@ export default function Navbar() {
 
                 {/* Post Ad – desktop */}
                 <Link href="/post-ad" className="hidden sm:block ml-1">
-                  <Button className="bg-olx-yellow text-olx font-semibold hover:bg-olx-yellow/90 gap-2 rounded-full px-5 shadow-sm">
+                  <Button className="bg-pm-yellow text-pm font-semibold hover:bg-pm-yellow/90 gap-2 rounded-full px-5 shadow-sm">
                     <Plus className="h-4 w-4" />
                     Sell Now
                   </Button>
@@ -218,9 +218,9 @@ export default function Navbar() {
                           variant="ghost"
                           className="hidden sm:flex items-center gap-2 text-white hover:bg-white/10 rounded-full pl-1 pr-2"
                         >
-                          <Avatar className="h-8 w-8 ring-2 ring-olx-accent/60">
+                          <Avatar className="h-8 w-8 ring-2 ring-pm-accent/60">
                             <AvatarImage src={user.image || undefined} alt={user.name || ''} />
-                            <AvatarFallback className="bg-olx-light text-olx-accent text-xs font-semibold">
+                            <AvatarFallback className="bg-pm-light text-pm-accent text-xs font-semibold">
                               {getInitials(user.name || 'U')}
                             </AvatarFallback>
                           </Avatar>
@@ -231,10 +231,10 @@ export default function Navbar() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-56" align="end" forceMount>
-                        <div className="flex items-center gap-3 p-3 bg-gradient-to-br from-olx to-olx-light rounded-t-md">
-                          <Avatar className="h-10 w-10 ring-2 ring-olx-accent/60">
+                        <div className="flex items-center gap-3 p-3 bg-gradient-to-br from-pm to-pm-light rounded-t-md">
+                          <Avatar className="h-10 w-10 ring-2 ring-pm-accent/60">
                             <AvatarImage src={user.image || undefined} alt={user.name || ''} />
-                            <AvatarFallback className="bg-olx-light text-olx-accent text-sm font-semibold">
+                            <AvatarFallback className="bg-pm-light text-pm-accent text-sm font-semibold">
                               {getInitials(user.name || 'U')}
                             </AvatarFallback>
                           </Avatar>
@@ -295,7 +295,7 @@ export default function Navbar() {
                       </Button>
                     </Link>
                     <Link href="/register">
-                      <Button className="bg-olx-accent text-olx font-semibold hover:bg-olx-accent/90 rounded-full px-5">
+                      <Button className="bg-pm-accent text-pm font-semibold hover:bg-pm-accent/90 rounded-full px-5">
                         Register
                       </Button>
                     </Link>
@@ -320,10 +320,10 @@ export default function Navbar() {
 
                     {/* Drawer header */}
                     {user ? (
-                      <div className="flex items-center gap-3 p-5 bg-gradient-to-br from-olx to-olx-light">
-                        <Avatar className="h-12 w-12 ring-2 ring-olx-accent/60 shrink-0">
+                      <div className="flex items-center gap-3 p-5 bg-gradient-to-br from-pm to-pm-light">
+                        <Avatar className="h-12 w-12 ring-2 ring-pm-accent/60 shrink-0">
                           <AvatarImage src={user.image || undefined} alt={user.name || ''} />
-                          <AvatarFallback className="bg-olx-light text-olx-accent font-semibold">
+                          <AvatarFallback className="bg-pm-light text-pm-accent font-semibold">
                             {getInitials(user.name || 'U')}
                           </AvatarFallback>
                         </Avatar>
@@ -333,11 +333,11 @@ export default function Navbar() {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between p-5 bg-gradient-to-br from-olx to-olx-light">
+                      <div className="flex items-center justify-between p-5 bg-gradient-to-br from-pm to-pm-light">
                         <div className="flex items-center gap-2">
-                          <ShoppingBag className="h-6 w-6 text-olx-accent" />
+                          <ShoppingBag className="h-6 w-6 text-pm-accent" />
                           <span className="text-lg font-extrabold text-white">Pakistan</span>
-                          <span className="text-lg font-extrabold text-olx-accent">Market</span>
+                          <span className="text-lg font-extrabold text-pm-accent">Market</span>
                         </div>
                       </div>
                     )}
@@ -348,7 +348,7 @@ export default function Navbar() {
                       {/* Post Ad highlight */}
                       <Link
                         href="/post-ad"
-                        className="flex items-center gap-3 rounded-lg bg-olx-yellow text-olx font-semibold px-4 py-3 mb-2 hover:bg-olx-yellow/90 transition-colors"
+                        className="flex items-center gap-3 rounded-lg bg-pm-yellow text-pm font-semibold px-4 py-3 mb-2 hover:bg-pm-yellow/90 transition-colors"
                       >
                         <Plus className="h-5 w-5" />
                         Post an Ad — Free!
@@ -364,7 +364,7 @@ export default function Navbar() {
                           href={`/search?category=${slug}`}
                           className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
                         >
-                          <Icon className="h-4 w-4 text-olx shrink-0" />
+                          <Icon className="h-4 w-4 text-pm shrink-0" />
                           {label}
                         </Link>
                       ))}
@@ -385,23 +385,23 @@ export default function Navbar() {
                       {user ? (
                         <>
                           <Link href="/profile" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <User className="h-4 w-4 text-olx shrink-0" />
+                            <User className="h-4 w-4 text-pm shrink-0" />
                             Profile
                           </Link>
                           <Link href="/my-ads" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <LayoutDashboard className="h-4 w-4 text-olx shrink-0" />
+                            <LayoutDashboard className="h-4 w-4 text-pm shrink-0" />
                             My Ads
                           </Link>
                           <Link href="/stores/my-store" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <Store className="h-4 w-4 text-olx shrink-0" />
+                            <Store className="h-4 w-4 text-pm shrink-0" />
                             My Store
                           </Link>
                           <Link href="/favorites" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <Heart className="h-4 w-4 text-olx shrink-0" />
+                            <Heart className="h-4 w-4 text-pm shrink-0" />
                             Favourites
                           </Link>
                           <Link href="/chat" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <MessageSquare className="h-4 w-4 text-olx shrink-0" />
+                            <MessageSquare className="h-4 w-4 text-pm shrink-0" />
                             Messages
                             {unreadCount > 0 && (
                               <Badge className="ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
@@ -410,12 +410,12 @@ export default function Navbar() {
                             )}
                           </Link>
                           <Link href="/notifications" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <Bell className="h-4 w-4 text-olx shrink-0" />
+                            <Bell className="h-4 w-4 text-pm shrink-0" />
                             Notifications
                           </Link>
                           {user.role === 'ADMIN' && (
                             <Link href="/admin" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                              <LayoutDashboard className="h-4 w-4 text-olx shrink-0" />
+                              <LayoutDashboard className="h-4 w-4 text-pm shrink-0" />
                               Admin Dashboard
                             </Link>
                           )}
@@ -432,12 +432,12 @@ export default function Navbar() {
                       ) : (
                         <div className="mt-4 flex flex-col gap-2">
                           <Link href="/login">
-                            <Button variant="outline" className="w-full border-olx text-olx font-semibold">
+                            <Button variant="outline" className="w-full border-pm text-pm font-semibold">
                               Login
                             </Button>
                           </Link>
                           <Link href="/register">
-                            <Button className="w-full bg-olx-accent text-olx font-semibold hover:bg-olx-accent/90">
+                            <Button className="w-full bg-pm-accent text-pm font-semibold hover:bg-pm-accent/90">
                               Register
                             </Button>
                           </Link>
@@ -466,7 +466,7 @@ export default function Navbar() {
                         name="search"
                         autoFocus
                         placeholder="Search for anything…"
-                        className="w-full h-10 pl-10 pr-4 rounded-full border-2 border-olx-accent/60 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:border-olx-accent transition-all"
+                        className="w-full h-10 pl-10 pr-4 rounded-full border-2 border-pm-accent/60 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:border-pm-accent transition-all"
                       />
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60" />
                     </form>
@@ -478,7 +478,7 @@ export default function Navbar() {
         </div>
 
         {/* ---- Category shortcut bar ------------------------------------- */}
-        <div className="bg-olx-light border-t border-white/10">
+        <div className="bg-pm-light border-t border-white/10">
           <div className="container mx-auto px-4">
             {/* On mobile this scrolls horizontally; on desktop it's a row */}
             <div className="flex items-center gap-1 overflow-x-auto scrollbar-none py-1">
@@ -486,7 +486,7 @@ export default function Navbar() {
                 <Link
                   key={slug}
                   href={`/search?category=${slug}`}
-                  className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10 hover:text-olx-accent transition-all whitespace-nowrap"
+                  className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10 hover:text-pm-accent transition-all whitespace-nowrap"
                 >
                   <Icon className="h-3.5 w-3.5" />
                   {label}
@@ -504,7 +504,7 @@ export default function Navbar() {
         <Link href="/post-ad">
           <motion.button
             whileTap={{ scale: 0.93 }}
-            className="flex items-center gap-2 rounded-full bg-olx-yellow text-olx font-bold px-5 py-3 shadow-xl ring-2 ring-olx-yellow/40"
+            className="flex items-center gap-2 rounded-full bg-pm-yellow text-pm font-bold px-5 py-3 shadow-xl ring-2 ring-pm-yellow/40"
           >
             <Plus className="h-5 w-5" />
             Post Ad

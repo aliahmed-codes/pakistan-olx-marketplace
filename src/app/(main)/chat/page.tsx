@@ -169,7 +169,7 @@ export default function ChatPage() {
       <>
         <Navbar />
         <main className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
         </main>
         <Footer />
       </>
@@ -202,12 +202,12 @@ export default function ChatPage() {
                           key={conv.id}
                           onClick={() => selectConversation(conv)}
                           className={`w-full p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors ${
-                            selectedConversation?.id === conv.id ? 'bg-olx/5 border-l-4 border-l-olx' : ''
+                            selectedConversation?.id === conv.id ? 'bg-pm/5 border-l-4 border-l-pm' : ''
                           }`}
                         >
                           <Avatar className="h-12 w-12 flex-shrink-0">
                             <AvatarImage src={conv.user.profileImage || undefined} />
-                            <AvatarFallback className="bg-olx text-white">
+                            <AvatarFallback className="bg-pm text-white">
                               {getInitials(conv.user.name)}
                             </AvatarFallback>
                           </Avatar>
@@ -230,7 +230,7 @@ export default function ChatPage() {
                             )}
                           </div>
                           {conv.unreadCount > 0 && (
-                            <span className="bg-olx text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                            <span className="bg-pm text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                               {conv.unreadCount}
                             </span>
                           )}
@@ -268,13 +268,13 @@ export default function ChatPage() {
                         </Button>
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={selectedConversation.user.profileImage || undefined} />
-                          <AvatarFallback className="bg-olx text-white">
+                          <AvatarFallback className="bg-pm text-white">
                             {getInitials(selectedConversation.user.name)}
                           </AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium">{selectedConversation.user.name}</p>
-                          <Link href={`/ad/${selectedConversation.ad.id}`} className="text-sm text-gray-500 hover:text-olx">
+                          <Link href={`/ad/${selectedConversation.ad.id}`} className="text-sm text-gray-500 hover:text-pm">
                             {formatPrice(selectedConversation.ad.price)} • {selectedConversation.ad.title.slice(0, 30)}...
                           </Link>
                         </div>
@@ -302,7 +302,7 @@ export default function ChatPage() {
                               <div
                                 className={`max-w-[70%] rounded-2xl px-4 py-2 ${
                                   isMe
-                                    ? 'bg-olx text-white rounded-br-none'
+                                    ? 'bg-pm text-white rounded-br-none'
                                     : 'bg-gray-100 text-gray-900 rounded-bl-none'
                                 }`}
                               >
@@ -336,7 +336,7 @@ export default function ChatPage() {
                         />
                         <Button
                           type="submit"
-                          className="bg-olx hover:bg-olx-light"
+                          className="bg-pm hover:bg-pm-light"
                           disabled={isSending || !newMessage.trim()}
                         >
                           <Send className="h-5 w-5" />

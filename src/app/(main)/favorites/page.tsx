@@ -99,7 +99,7 @@ export default function FavoritesPage() {
       <>
         <Navbar />
         <main className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
         </main>
         <Footer />
       </>
@@ -152,7 +152,7 @@ export default function FavoritesPage() {
                 </p>
                 <Button
                   onClick={() => router.push('/search')}
-                  className="bg-olx hover:bg-olx-light gap-2"
+                  className="bg-pm hover:bg-pm-light gap-2"
                 >
                   <ShoppingBag className="h-4 w-4" />
                   Browse Ads

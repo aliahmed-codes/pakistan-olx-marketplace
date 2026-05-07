@@ -241,7 +241,7 @@ export default function PostAdPage() {
       <>
         <Navbar />
         <main className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
         </main>
         <Footer />
       </>
@@ -278,7 +278,7 @@ export default function PostAdPage() {
                           />
                           {/* Cover badge */}
                           {index === 0 && (
-                            <div className="absolute top-2 left-2 bg-olx text-white text-xs px-2 py-1 rounded">
+                            <div className="absolute top-2 left-2 bg-pm text-white text-xs px-2 py-1 rounded">
                               Cover
                             </div>
                           )}
@@ -317,7 +317,7 @@ export default function PostAdPage() {
                     </div>
                   )}
                   {imageFiles.length < 8 && (
-                    <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-olx-accent transition-colors">
+                    <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-pm-accent transition-colors">
                       <Plus className="h-6 w-6 text-gray-400" />
                       <span className="text-gray-600">Add Photos</span>
                       <input
@@ -535,7 +535,7 @@ export default function PostAdPage() {
               <div className="flex gap-4">
                 <Button
                   type="submit"
-                  className="flex-1 bg-olx hover:bg-olx-light"
+                  className="flex-1 bg-pm hover:bg-pm-light"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Posting...' : 'Post Ad'}

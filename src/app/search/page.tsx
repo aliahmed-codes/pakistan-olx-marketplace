@@ -260,7 +260,7 @@ function SearchContent() {
 
       {/* Apply/Clear Buttons */}
       <div className="space-y-2">
-        <Button onClick={applyFilters} className="w-full bg-olx hover:bg-olx-light">
+        <Button onClick={applyFilters} className="w-full bg-pm hover:bg-pm-light">
           Apply Filters
         </Button>
         {hasActiveFilters && (
@@ -459,7 +459,7 @@ function SearchContent() {
                             <h3 className="font-semibold text-gray-900 line-clamp-1 mb-1">
                               {ad.title}
                             </h3>
-                            <p className="text-xl font-bold text-olx mb-2">
+                            <p className="text-xl font-bold text-pm mb-2">
                               {formatPrice(ad.price)}
                             </p>
                             <div className="flex items-center justify-between text-sm text-gray-500">
@@ -516,7 +516,7 @@ export default function SearchPage() {
       <>
         <Navbar />
         <main className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
         </main>
         <Footer />
       </>

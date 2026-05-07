@@ -204,7 +204,7 @@ export default function StoreDetailPage() {
       <>
         <Navbar />
         <main className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
         </main>
         <Footer />
       </>
@@ -235,7 +235,7 @@ export default function StoreDetailPage() {
       <main className="min-h-screen bg-gray-50">
         {/* Cover Image */}
         <div 
-          className="h-48 md:h-64 bg-gradient-to-r from-olx to-olx-light relative"
+          className="h-48 md:h-64 bg-gradient-to-r from-pm to-pm-light relative"
           style={store.coverImage ? { backgroundImage: `url(${store.coverImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
         />
 
@@ -301,7 +301,7 @@ export default function StoreDetailPage() {
                 {/* Actions */}
                 <div className="flex flex-col gap-3">
                   <Button 
-                    className="bg-olx hover:bg-olx-light"
+                    className="bg-pm hover:bg-pm-light"
                     onClick={handleChat}
                   >
                     <MessageCircle className="w-4 h-4 mr-2" />
@@ -341,7 +341,7 @@ export default function StoreDetailPage() {
                 </h2>
                 <Link
                   href={`/search?store=${store.slug}`}
-                  className="text-olx hover:underline flex items-center gap-1"
+                  className="text-pm hover:underline flex items-center gap-1"
                 >
                   View All
                   <ChevronRight className="w-4 h-4" />
@@ -383,7 +383,7 @@ export default function StoreDetailPage() {
                           <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">
                             {ad.title}
                           </h3>
-                          <p className="text-olx font-bold mb-2">
+                          <p className="text-pm font-bold mb-2">
                             {formatPrice(ad.price)}
                           </p>
                           <div className="flex items-center justify-between text-sm text-gray-500">
@@ -424,7 +424,7 @@ export default function StoreDetailPage() {
                       <p className="font-medium text-gray-900">Phone</p>
                       <a
                         href={`tel:${store.phone}`}
-                        className="text-olx hover:underline text-sm"
+                        className="text-pm hover:underline text-sm"
                       >
                         {store.phone}
                       </a>
@@ -436,7 +436,7 @@ export default function StoreDetailPage() {
                       <p className="font-medium text-gray-900">Email</p>
                       <a
                         href={`mailto:${store.email}`}
-                        className="text-olx hover:underline text-sm"
+                        className="text-pm hover:underline text-sm"
                       >
                         {store.email}
                       </a>
@@ -451,7 +451,7 @@ export default function StoreDetailPage() {
                           href={`https://${store.website}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-olx hover:underline text-sm"
+                          className="text-pm hover:underline text-sm"
                         >
                           {store.website}
                         </a>

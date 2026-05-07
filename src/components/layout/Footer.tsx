@@ -31,7 +31,7 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-olx text-white">
+    <footer className="bg-pm text-white">
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
@@ -39,7 +39,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
               <span className="text-2xl font-bold">Pakistan</span>
-              <span className="text-2xl font-bold text-olx-accent">Market</span>
+              <span className="text-2xl font-bold text-pm-accent">Market</span>
             </Link>
             <p className="text-gray-300 mb-4">
               Pakistan&apos;s #1 classified marketplace. Buy, sell, and find anything you need.
@@ -68,7 +68,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-gray-300 hover:text-olx-accent transition-colors"
+                    className="text-gray-300 hover:text-pm-accent transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -85,7 +85,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-gray-300 hover:text-olx-accent transition-colors"
+                    className="text-gray-300 hover:text-pm-accent transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -102,7 +102,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-gray-300 hover:text-olx-accent transition-colors"
+                    className="text-gray-300 hover:text-pm-accent transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -119,7 +119,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-gray-300 hover:text-olx-accent transition-colors"
+                    className="text-gray-300 hover:text-pm-accent transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -131,7 +131,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-olx-light">
+      <div className="border-t border-pm-light">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-400 text-sm">
@@ -142,7 +142,7 @@ export default function Footer() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-olx-accent transition-colors"
+                className="text-gray-400 hover:text-pm-accent transition-colors"
               >
                 <Facebook className="h-5 w-5" />
               </Link>
@@ -150,7 +150,7 @@ export default function Footer() {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-olx-accent transition-colors"
+                className="text-gray-400 hover:text-pm-accent transition-colors"
               >
                 <Twitter className="h-5 w-5" />
               </Link>
@@ -158,7 +158,7 @@ export default function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-olx-accent transition-colors"
+                className="text-gray-400 hover:text-pm-accent transition-colors"
               >
                 <Instagram className="h-5 w-5" />
               </Link>
@@ -166,7 +166,7 @@ export default function Footer() {
                 href="https://youtube.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-olx-accent transition-colors"
+                className="text-gray-400 hover:text-pm-accent transition-colors"
               >
                 <Youtube className="h-5 w-5" />
               </Link>

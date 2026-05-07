@@ -173,7 +173,7 @@ export default function FeatureAdPage() {
       <>
         <Navbar />
         <main className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
         </main>
         <Footer />
       </>
@@ -243,19 +243,19 @@ export default function FeatureAdPage() {
                     />
                   </div>
                   <h3 className="font-semibold text-lg">{ad.title}</h3>
-                  <p className="text-olx font-bold text-xl">
+                  <p className="text-pm font-bold text-xl">
                     {formatPrice(ad.price)}
                   </p>
                 </CardContent>
               </Card>
 
               {/* Pricing Info */}
-              <Card className="mt-6 bg-gradient-to-br from-olx-yellow/20 to-olx-accent/20 border-olx-yellow">
+              <Card className="mt-6 bg-gradient-to-br from-pm-yellow/20 to-pm-accent/20 border-pm-yellow">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600">Featured Ad Price</p>
-                      <p className="text-3xl font-bold text-olx">
+                      <p className="text-3xl font-bold text-pm">
                         Rs {bankDetails?.featuredAdPrice.toLocaleString()}
                       </p>
                     </div>
@@ -298,28 +298,28 @@ export default function FeatureAdPage() {
                     {/* Bank Details */}
                     <div className="bg-gray-50 p-4 rounded-lg space-y-3">
                       <div className="flex items-center gap-3">
-                        <Building2 className="h-5 w-5 text-olx" />
+                        <Building2 className="h-5 w-5 text-pm" />
                         <div>
                           <p className="text-sm text-gray-500">Bank Name</p>
                           <p className="font-medium">{bankDetails?.bankDetails.bankName}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <User className="h-5 w-5 text-olx" />
+                        <User className="h-5 w-5 text-pm" />
                         <div>
                           <p className="text-sm text-gray-500">Account Title</p>
                           <p className="font-medium">{bankDetails?.bankDetails.accountTitle}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <CreditCard className="h-5 w-5 text-olx" />
+                        <CreditCard className="h-5 w-5 text-pm" />
                         <div>
                           <p className="text-sm text-gray-500">Account Number</p>
                           <p className="font-medium">{bankDetails?.bankDetails.accountNumber}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <CreditCard className="h-5 w-5 text-olx" />
+                        <CreditCard className="h-5 w-5 text-pm" />
                         <div>
                           <p className="text-sm text-gray-500">IBAN</p>
                           <p className="font-medium">{bankDetails?.bankDetails.iban}</p>
@@ -327,7 +327,7 @@ export default function FeatureAdPage() {
                       </div>
                       {bankDetails?.bankDetails.branchCode && (
                         <div className="flex items-center gap-3">
-                          <Building2 className="h-5 w-5 text-olx" />
+                          <Building2 className="h-5 w-5 text-pm" />
                           <div>
                             <p className="text-sm text-gray-500">Branch Code</p>
                             <p className="font-medium">{bankDetails.bankDetails.branchCode}</p>
@@ -357,7 +357,7 @@ export default function FeatureAdPage() {
                             </button>
                           </div>
                         ) : (
-                          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-olx-accent transition-colors">
+                          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-pm-accent transition-colors">
                             <Upload className="h-8 w-8 text-gray-400" />
                             <span className="mt-2 text-sm text-gray-500">
                               Upload payment screenshot
@@ -386,7 +386,7 @@ export default function FeatureAdPage() {
 
                     <Button
                       type="submit"
-                      className="w-full bg-olx hover:bg-olx-light"
+                      className="w-full bg-pm hover:bg-pm-light"
                       isLoading={isSubmitting || uploadingScreenshot}
                       disabled={!screenshot}
                     >

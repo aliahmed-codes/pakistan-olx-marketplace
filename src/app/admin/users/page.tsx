@@ -133,7 +133,7 @@ export default function AdminUsersPage() {
                       <div className="flex items-center gap-4 flex-1">
                         <Avatar className="h-14 w-14">
                           <AvatarImage src={user.profileImage || undefined} />
-                          <AvatarFallback className="bg-olx text-white text-lg">
+                          <AvatarFallback className="bg-pm text-white text-lg">
                             {getInitials(user.name)}
                           </AvatarFallback>
                         </Avatar>

@@ -137,7 +137,7 @@ export default function CategoryPage() {
       <Navbar />
       <main className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-olx to-olx-light text-white">
+        <div className="bg-gradient-to-r from-pm to-pm-light text-white">
           <div className="container mx-auto px-4 py-12">
             <div className="flex items-center gap-2 text-white/80 mb-4">
               <Link href="/" className="hover:text-white">Home</Link>
@@ -168,7 +168,7 @@ export default function CategoryPage() {
                 onClick={() => setSelectedSubCategory('')}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedSubCategory === ''
-                    ? 'bg-olx text-white'
+                    ? 'bg-pm text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -180,7 +180,7 @@ export default function CategoryPage() {
                   onClick={() => setSelectedSubCategory(sub.id)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                     selectedSubCategory === sub.id
-                      ? 'bg-olx text-white'
+                      ? 'bg-pm text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -200,7 +200,7 @@ export default function CategoryPage() {
                 : `All ${category.name}`}
             </h2>
             <Link href={`/post-ad?category=${category.id}`}>
-              <Button className="bg-olx hover:bg-olx-light">
+              <Button className="bg-pm hover:bg-pm-light">
                 Post Ad in {category.name}
               </Button>
             </Link>
@@ -226,7 +226,7 @@ export default function CategoryPage() {
                 Be the first to post an ad in this category
               </p>
               <Link href={`/post-ad?category=${category.id}`}>
-                <Button className="bg-olx hover:bg-olx-light">Post an Ad</Button>
+                <Button className="bg-pm hover:bg-pm-light">Post an Ad</Button>
               </Link>
             </div>
           ) : (
@@ -266,7 +266,7 @@ export default function CategoryPage() {
                       <h3 className="font-semibold text-gray-900 line-clamp-1 mb-1">
                         {ad.title}
                       </h3>
-                      <p className="text-xl font-bold text-olx mb-2">
+                      <p className="text-xl font-bold text-pm mb-2">
                         {formatPrice(ad.price)}
                       </p>
                       <div className="flex items-center justify-between text-sm text-gray-500">
@@ -296,7 +296,7 @@ export default function CategoryPage() {
         {/* CTA Section */}
         <div className="bg-white border-t">
           <div className="container mx-auto px-4 py-12">
-            <div className="bg-gradient-to-r from-olx to-olx-light rounded-2xl p-8 text-center text-white">
+            <div className="bg-gradient-to-r from-pm to-pm-light rounded-2xl p-8 text-center text-white">
               <h2 className="text-2xl font-bold mb-2">
                 Have something to sell in {category.name}?
               </h2>
@@ -304,7 +304,7 @@ export default function CategoryPage() {
                 Post your ad for free and reach thousands of buyers
               </p>
               <Link href={`/post-ad?category=${category.id}`}>
-                <Button className="bg-white text-olx hover:bg-gray-100">
+                <Button className="bg-white text-pm hover:bg-gray-100">
                   Post Free Ad
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>

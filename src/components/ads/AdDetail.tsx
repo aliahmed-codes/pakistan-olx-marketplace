@@ -217,11 +217,11 @@ export function AdDetail({
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-        <Link href="/" className="hover:text-olx">
+        <Link href="/" className="hover:text-pm">
           Home
         </Link>
         <ChevronLeft className="h-4 w-4 rotate-180" />
-        <Link href={`/category/${ad.category.slug}`} className="hover:text-olx">
+        <Link href={`/category/${ad.category.slug}`} className="hover:text-pm">
           {ad.category.name}
         </Link>
         <ChevronLeft className="h-4 w-4 rotate-180" />
@@ -277,7 +277,7 @@ export function AdDetail({
                   onClick={() => setCurrentImageIndex(index)}
                   className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
                     index === currentImageIndex
-                      ? "border-olx-accent"
+                      ? "border-pm-accent"
                       : "border-transparent"
                   }`}
                 >
@@ -340,7 +340,7 @@ export function AdDetail({
               </div>
 
               {/* Price */}
-              <p className="text-3xl font-bold text-olx mb-6">
+              <p className="text-3xl font-bold text-pm mb-6">
                 {formatPrice(price)}
               </p>
 
@@ -370,7 +370,7 @@ export function AdDetail({
           {/* Price Card (Mobile) */}
           <Card className="lg:hidden">
             <CardContent className="p-6">
-              <p className="text-3xl font-bold text-olx">
+              <p className="text-3xl font-bold text-pm">
                 {formatPrice(price)}
               </p>
             </CardContent>
@@ -383,7 +383,7 @@ export function AdDetail({
               <div className="flex items-center gap-4 mb-4">
                 <Avatar className="h-16 w-16">
                   <AvatarImage src={ad.user.profileImage || undefined} />
-                  <AvatarFallback className="bg-olx text-white text-xl">
+                  <AvatarFallback className="bg-pm text-white text-xl">
                     {getInitials(ad.user.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -399,7 +399,7 @@ export function AdDetail({
               {!isOwner && (
                 <div className="space-y-3">
                   <Button
-                    className="w-full bg-olx hover:bg-olx-light gap-2"
+                    className="w-full bg-pm hover:bg-pm-light gap-2"
                     onClick={handleContact}
                   >
                     <MessageCircle className="h-5 w-5" />
@@ -422,7 +422,7 @@ export function AdDetail({
                           </DialogDescription>
                         </DialogHeader>
                         <div className="text-center py-4">
-                          <p className="text-2xl font-bold text-olx">
+                          <p className="text-2xl font-bold text-pm">
                             {ad.phone || ad.user.phone}
                           </p>
                         </div>
@@ -442,7 +442,7 @@ export function AdDetail({
                   </Link>
                   {!ad.isFeatured && (
                     <Link href={`/feature-ad/${ad.id}`}>
-                      <Button className="w-full bg-olx-yellow text-olx hover:bg-olx-yellow/90">
+                      <Button className="w-full bg-pm-yellow text-pm hover:bg-pm-yellow/90">
                         Feature This Ad
                       </Button>
                     </Link>

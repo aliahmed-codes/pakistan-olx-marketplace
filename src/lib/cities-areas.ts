@@ -1,5 +1,5 @@
 // Cities and Areas for Pakistan Marketplace
-// Based on OLX Pakistan structure
+// Based on pm Pakistan structure
 
 export interface CityAreas {
   city: string;

@@ -44,13 +44,13 @@ export function CategoryCard({ category, adCount }: CategoryCardProps) {
 
   return (
     <Link href={`/categories/${category.slug}`}>
-      <div className="category-card flex flex-col items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-olx-accent hover:shadow-md transition-all duration-300">
+      <div className="category-card flex flex-col items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-pm-accent hover:shadow-md transition-all duration-300">
         {/* Icon */}
-        <div className="w-16 h-16 rounded-full bg-olx/5 flex items-center justify-center mb-3">
+        <div className="w-16 h-16 rounded-full bg-pm/5 flex items-center justify-center mb-3">
           {Icon ? (
-            <Icon className="h-8 w-8 text-olx" />
+            <Icon className="h-8 w-8 text-pm" />
           ) : (
-            <div className="h-8 w-8 rounded-full bg-olx/20" />
+            <div className="h-8 w-8 rounded-full bg-pm/20" />
           )}
         </div>
 

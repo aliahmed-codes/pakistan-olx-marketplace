@@ -154,11 +154,11 @@ export default function AdminReportsPage() {
                               </span>
                             </div>
                             <Link href={`/ad/${report.ad.id}`}>
-                              <h3 className="font-semibold text-lg hover:text-olx">
+                              <h3 className="font-semibold text-lg hover:text-pm">
                                 {report.ad.title}
                               </h3>
                             </Link>
-                            <p className="text-olx font-bold">
+                            <p className="text-pm font-bold">
                               {formatPrice(report.ad.price)}
                             </p>
                             <div className="mt-2 text-sm text-gray-600">

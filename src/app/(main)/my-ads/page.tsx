@@ -119,7 +119,7 @@ export default function MyAdsPage() {
       <>
         <Navbar />
         <main className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
         </main>
         <Footer />
       </>
@@ -138,7 +138,7 @@ export default function MyAdsPage() {
               <p className="text-gray-500 mt-1">Manage your listings</p>
             </div>
             <Link href="/post-ad">
-              <Button className="bg-olx hover:bg-olx-light gap-2">
+              <Button className="bg-pm hover:bg-pm-light gap-2">
                 <Plus className="h-4 w-4" />
                 Post New Ad
               </Button>
@@ -184,7 +184,7 @@ export default function MyAdsPage() {
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <p className="font-bold text-lg text-olx">
+                            <p className="font-bold text-lg text-pm">
                               {formatPrice(ad.price)}
                             </p>
                             <h3 className="font-medium line-clamp-1">{ad.title}</h3>
@@ -215,7 +215,7 @@ export default function MyAdsPage() {
                           </Link>
                           {!ad.isFeatured && ad.isApproved && (
                             <Link href={`/feature-ad/${ad.id}`} className="flex-1">
-                              <Button size="sm" className="w-full gap-1 bg-olx-yellow text-olx hover:bg-olx-yellow/90">
+                              <Button size="sm" className="w-full gap-1 bg-pm-yellow text-pm hover:bg-pm-yellow/90">
                                 <Star className="h-4 w-4" />
                                 Feature
                               </Button>
@@ -269,7 +269,7 @@ export default function MyAdsPage() {
                       You haven&apos;t posted any ads yet
                     </p>
                     <Link href="/post-ad">
-                      <Button className="bg-olx hover:bg-olx-light gap-2">
+                      <Button className="bg-pm hover:bg-pm-light gap-2">
                         <Plus className="h-4 w-4" />
                         Post Your First Ad
                       </Button>

@@ -778,7 +778,7 @@ export default function SettingsPage() {
                           {
                             key: "marketingEmails" as const,
                             label: "Marketing Emails",
-                            description: "Tips, promotions and product news from OLX",
+                            description: "Tips, promotions and product news from pm",
                             icon: "📧",
                           },
                         ].map((item) => (

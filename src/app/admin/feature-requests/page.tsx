@@ -165,11 +165,11 @@ export default function AdminFeatureRequestsPage() {
                               </span>
                             </div>
                             <Link href={`/ad/${request.ad.id}`}>
-                              <h3 className="font-semibold text-lg hover:text-olx">
+                              <h3 className="font-semibold text-lg hover:text-pm">
                                 {request.ad.title}
                               </h3>
                             </Link>
-                            <p className="text-olx font-bold">
+                            <p className="text-pm font-bold">
                               {formatPrice(request.ad.price)}
                             </p>
                             <div className="mt-2 text-sm text-gray-600">

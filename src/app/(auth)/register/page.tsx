@@ -105,8 +105,8 @@ export default function RegisterPage() {
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center mb-4">
             <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-olx">Pakistan</span>
-              <span className="text-2xl font-bold text-olx-accent">Market</span>
+              <span className="text-2xl font-bold text-pm">Pakistan</span>
+              <span className="text-2xl font-bold text-pm-accent">Market</span>
             </Link>
           </div>
           <CardTitle className="text-2xl text-center">Create Account</CardTitle>
@@ -247,7 +247,7 @@ export default function RegisterPage() {
           <CardFooter className="flex flex-col gap-4">
             <Button
               type="submit"
-              className="w-full bg-olx hover:bg-olx-light"
+              className="w-full bg-pm hover:bg-pm-light"
               isLoading={isLoading}
             >
               Create Account
@@ -257,7 +257,7 @@ export default function RegisterPage() {
               Already have an account?{' '}
               <Link
                 href="/login"
-                className="font-medium text-olx hover:text-olx-accent"
+                className="font-medium text-pm hover:text-pm-accent"
               >
                 Login
               </Link>

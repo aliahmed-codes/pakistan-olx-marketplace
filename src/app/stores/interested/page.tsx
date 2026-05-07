@@ -87,7 +87,7 @@ export default function InterestedStoresPage() {
   if (status === 'loading' || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
       </div>
     );
   }
@@ -111,7 +111,7 @@ export default function InterestedStoresPage() {
                 <Button variant="outline">Browse All Stores</Button>
               </Link>
               <Link href="/stores/create">
-                <Button className="bg-olx hover:bg-olx-light">
+                <Button className="bg-pm hover:bg-pm-light">
                   <Store className="h-4 w-4 mr-2" />
                   Create Store
                 </Button>
@@ -154,7 +154,7 @@ export default function InterestedStoresPage() {
             </p>
             {stores.length === 0 && (
               <Link href="/stores">
-                <Button className="bg-olx hover:bg-olx-light">
+                <Button className="bg-pm hover:bg-pm-light">
                   Discover Stores
                 </Button>
               </Link>
@@ -168,7 +168,7 @@ export default function InterestedStoresPage() {
                 className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow"
               >
                 {/* Store Header */}
-                <div className="h-24 bg-gradient-to-r from-olx to-olx-light" />
+                <div className="h-24 bg-gradient-to-r from-pm to-pm-light" />
 
                 {/* Store Info */}
                 <div className="px-6 pb-6">

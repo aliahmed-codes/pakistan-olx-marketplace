@@ -50,7 +50,7 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        olx: {
+        pm: {
           DEFAULT: '#002f34',
           light: '#00363d',
           accent: '#23e5db',

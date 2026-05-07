@@ -153,7 +153,7 @@ export default function AdminDashboard() {
                   >
                     <Avatar>
                       <AvatarImage src={user.profileImage || undefined} />
-                      <AvatarFallback className="bg-olx text-white">
+                      <AvatarFallback className="bg-pm text-white">
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>

@@ -160,7 +160,7 @@ export default function ProfilePage() {
         <Navbar />
         <main className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="flex flex-col items-center gap-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
             <p className="text-gray-500">Loading your profile...</p>
           </div>
         </main>
@@ -181,7 +181,7 @@ export default function ProfilePage() {
       <Navbar />
       <main className="min-h-screen bg-gray-50">
         {/* Cover Banner */}
-        <div className="h-40 md:h-56 bg-gradient-to-r from-olx via-olx-light to-[#004d55] relative overflow-hidden">
+        <div className="h-40 md:h-56 bg-gradient-to-r from-pm via-pm-light to-[#004d55] relative overflow-hidden">
           <div className="absolute inset-0 opacity-10"
             style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }}
           />
@@ -195,16 +195,16 @@ export default function ProfilePage() {
                 <div className="flex flex-col md:flex-row items-start gap-6">
                   {/* Avatar */}
                   <div className="relative flex-shrink-0 -mt-12 md:-mt-16">
-                    <Avatar className="h-24 w-24 md:h-28 md:w-28 border-4 border-white shadow-xl ring-2 ring-olx/20">
+                    <Avatar className="h-24 w-24 md:h-28 md:w-28 border-4 border-white shadow-xl ring-2 ring-pm/20">
                       <AvatarImage src={formData.profileImage || undefined} />
-                      <AvatarFallback className="bg-olx text-white text-2xl font-bold">
+                      <AvatarFallback className="bg-pm text-white text-2xl font-bold">
                         {getInitials(formData.name || "U")}
                       </AvatarFallback>
                     </Avatar>
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isUploading}
-                      className="absolute bottom-0 right-0 bg-olx text-white p-1.5 rounded-full shadow-lg hover:bg-olx-light transition-colors"
+                      className="absolute bottom-0 right-0 bg-pm text-white p-1.5 rounded-full shadow-lg hover:bg-pm-light transition-colors"
                     >
                       {isUploading ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -233,7 +233,7 @@ export default function ProfilePage() {
                       </div>
                       <div className="flex gap-2">
                         <Link href="/post-ad">
-                          <Button size="sm" className="bg-olx hover:bg-olx-light gap-1">
+                          <Button size="sm" className="bg-pm hover:bg-pm-light gap-1">
                             <Plus className="h-4 w-4" />
                             Post Ad
                           </Button>
@@ -275,7 +275,7 @@ export default function ProfilePage() {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-base">
-                        <User className="h-4 w-4 text-olx" />
+                        <User className="h-4 w-4 text-pm" />
                         Personal Information
                       </CardTitle>
                     </CardHeader>
@@ -335,7 +335,7 @@ export default function ProfilePage() {
                           </Link>
                         </div>
 
-                        <Button type="submit" className="bg-olx hover:bg-olx-light gap-2 w-full sm:w-auto" disabled={isLoading}>
+                        <Button type="submit" className="bg-pm hover:bg-pm-light gap-2 w-full sm:w-auto" disabled={isLoading}>
                           {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                           Save Changes
                         </Button>
@@ -389,10 +389,10 @@ export default function ProfilePage() {
                         <div className={`p-2 rounded-lg ${link.bg}`}>
                           <link.icon className={`h-4 w-4 ${link.color}`} />
                         </div>
-                        <span className="text-sm font-medium text-gray-700 group-hover:text-olx flex-1">
+                        <span className="text-sm font-medium text-gray-700 group-hover:text-pm flex-1">
                           {link.label}
                         </span>
-                        <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-olx" />
+                        <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-pm" />
                       </div>
                     </Link>
                   ))}
@@ -400,12 +400,12 @@ export default function ProfilePage() {
               </Card>
 
               {/* Promote Banner */}
-              <div className="bg-gradient-to-br from-olx-yellow/30 to-olx-yellow/10 rounded-xl p-4 border border-olx-yellow/30">
-                <Star className="h-6 w-6 text-olx-yellow mb-2" />
+              <div className="bg-gradient-to-br from-pm-yellow/30 to-pm-yellow/10 rounded-xl p-4 border border-pm-yellow/30">
+                <Star className="h-6 w-6 text-pm-yellow mb-2" />
                 <p className="font-semibold text-gray-800 mb-1">Feature Your Ads</p>
                 <p className="text-xs text-gray-600 mb-3">Get 10x more views with a featured listing</p>
                 <Link href="/my-ads">
-                  <Button size="sm" className="bg-olx-yellow text-olx hover:bg-olx-yellow/90 w-full text-xs font-semibold">
+                  <Button size="sm" className="bg-pm-yellow text-pm hover:bg-pm-yellow/90 w-full text-xs font-semibold">
                     Promote Now
                   </Button>
                 </Link>

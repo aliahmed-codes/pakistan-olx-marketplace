@@ -267,7 +267,7 @@ export default function EditAdPage() {
       <>
         <Navbar />
         <main className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olx" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pm" />
         </main>
         <Footer />
       </>
@@ -316,7 +316,7 @@ export default function EditAdPage() {
                       </div>
                     ))}
                     {images.length < 8 && (
-                      <label className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-olx-accent transition-colors">
+                      <label className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-pm-accent transition-colors">
                         <Plus className="h-8 w-8 text-gray-400" />
                         <span className="text-sm text-gray-500 mt-2">Add Photo</span>
                         <input
@@ -525,7 +525,7 @@ export default function EditAdPage() {
               <div className="flex gap-4">
                 <Button
                   type="submit"
-                  className="flex-1 bg-olx hover:bg-olx-light"
+                  className="flex-1 bg-pm hover:bg-pm-light"
                   isLoading={isSaving}
                   disabled={uploadingImages}
                 >

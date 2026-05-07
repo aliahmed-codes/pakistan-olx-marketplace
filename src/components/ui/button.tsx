@@ -14,8 +14,8 @@ const buttonVariants = cva(
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
-        olx: 'bg-olx text-white hover:bg-olx-light',
-        'olx-accent': 'bg-olx-accent text-olx hover:bg-olx-accent/90',
+        pm: 'bg-pm text-white hover:bg-pm-light',
+        'pm-accent': 'bg-pm-accent text-pm hover:bg-pm-accent/90',
       },
       size: {
         default: 'h-10 px-4 py-2',

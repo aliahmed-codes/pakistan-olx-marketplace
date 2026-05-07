@@ -148,7 +148,7 @@ export function AdCard({ ad, showFavorite = true }: AdCardProps) {
         {/* Content */}
         <div className="p-4">
           {/* Price */}
-          <p className="text-xl font-bold text-olx mb-1">
+          <p className="text-xl font-bold text-pm mb-1">
             {formatPrice(price)}
           </p>
 

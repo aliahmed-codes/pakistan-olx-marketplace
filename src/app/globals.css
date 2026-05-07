@@ -121,7 +121,7 @@
 }
 
 .message-bubble.sent {
-  @apply bg-olx-accent text-olx rounded-br-none;
+  @apply bg-pm-accent text-pm rounded-br-none;
 }
 
 .message-bubble.received {
@@ -135,7 +135,7 @@
 
 /* Price tag */
 .price-tag {
-  @apply inline-flex items-center font-bold text-lg text-olx;
+  @apply inline-flex items-center font-bold text-lg text-pm;
 }
 
 .price-tag::before {
@@ -163,7 +163,7 @@
 
 /* Admin sidebar */
 .admin-sidebar {
-  @apply fixed left-0 top-0 h-full w-64 bg-olx text-white z-50;
+  @apply fixed left-0 top-0 h-full w-64 bg-pm text-white z-50;
 }
 
 .admin-sidebar-link {
@@ -171,9 +171,9 @@
 }
 
 .admin-sidebar-link:hover {
-  @apply bg-olx-light;
+  @apply bg-pm-light;
 }
 
 .admin-sidebar-link.active {
-  @apply bg-olx-accent text-olx;
+  @apply bg-pm-accent text-pm;
 }

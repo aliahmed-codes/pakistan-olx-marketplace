@@ -200,7 +200,7 @@ export default function AdminAdsPage() {
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <p className="font-bold text-lg text-olx">
+                        <p className="font-bold text-lg text-pm">
                           {formatPrice(ad.price)}
                         </p>
                         <h3 className="font-medium line-clamp-1">{ad.title}</h3>

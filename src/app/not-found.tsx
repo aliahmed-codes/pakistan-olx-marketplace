@@ -15,10 +15,10 @@ export default function NotFound() {
           {/* 404 Illustration */}
           <div className="mb-8">
             <div className="relative inline-block">
-              <div className="text-9xl font-bold text-olx/10">404</div>
+              <div className="text-9xl font-bold text-pm/10">404</div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="bg-white p-6 rounded-full shadow-lg">
-                  <Search className="h-16 w-16 text-olx" />
+                  <Search className="h-16 w-16 text-pm" />
                 </div>
               </div>
             </div>
@@ -43,7 +43,7 @@ export default function NotFound() {
               Go Back
             </Button>
             <Link href="/">
-              <Button className="bg-olx hover:bg-olx-light gap-2">
+              <Button className="bg-pm hover:bg-pm-light gap-2">
                 <Home className="h-4 w-4" />
                 Back to Home
               </Button>

@@ -35,10 +35,10 @@ export default function AdminSidebar() {
   const NavContent = () => (
     <>
       {/* Logo */}
-      <div className="p-6 border-b border-olx-light">
+      <div className="p-6 border-b border-pm-light">
         <Link href="/admin" className="flex items-center gap-2">
           <span className="text-xl font-bold text-white">Admin</span>
-          <span className="text-xl font-bold text-olx-accent">Panel</span>
+          <span className="text-xl font-bold text-pm-accent">Panel</span>
         </Link>
       </div>
 
@@ -56,8 +56,8 @@ export default function AdminSidebar() {
                   className={cn(
                     'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
                     isActive
-                      ? 'bg-olx-accent text-olx'
-                      : 'text-gray-300 hover:bg-olx-light hover:text-white'
+                      ? 'bg-pm-accent text-pm'
+                      : 'text-gray-300 hover:bg-pm-light hover:text-white'
                   )}
                 >
                   <Icon className="h-5 w-5" />
@@ -70,15 +70,15 @@ export default function AdminSidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-olx-light">
+      <div className="p-4 border-t border-pm-light">
         <Link href="/">
-          <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white hover:bg-olx-light">
+          <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white hover:bg-pm-light">
             Back to Site
           </Button>
         </Link>
         <Button
           variant="ghost"
-          className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-olx-light mt-2"
+          className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-pm-light mt-2"
           onClick={() => signOut({ callbackUrl: '/' })}
         >
           <LogOut className="h-5 w-5 mr-2" />
@@ -91,7 +91,7 @@ export default function AdminSidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 bg-olx flex-col z-50">
+      <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 bg-pm flex-col z-50">
         <NavContent />
       </aside>
 
@@ -101,12 +101,12 @@ export default function AdminSidebar() {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden fixed top-4 left-4 z-50 bg-olx text-white hover:bg-olx-light"
+            className="lg:hidden fixed top-4 left-4 z-50 bg-pm text-white hover:bg-pm-light"
           >
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-64 bg-olx p-0 border-r-olx-light">
+        <SheetContent side="left" className="w-64 bg-pm p-0 border-r-pm-light">
           <div className="flex flex-col h-full">
             <NavContent />
           </div>

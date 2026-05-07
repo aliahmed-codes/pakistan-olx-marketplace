@@ -52,7 +52,7 @@ export default function ForgotPasswordPage() {
               Didn&apos;t receive the email? Check your spam folder or{' '}
               <button
                 onClick={() => setIsSubmitted(false)}
-                className="text-olx hover:text-olx-accent"
+                className="text-pm hover:text-pm-accent"
               >
                 try again
               </button>
@@ -75,8 +75,8 @@ export default function ForgotPasswordPage() {
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center mb-4">
             <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-olx">Pakistan</span>
-              <span className="text-2xl font-bold text-olx-accent">Market</span>
+              <span className="text-2xl font-bold text-pm">Pakistan</span>
+              <span className="text-2xl font-bold text-pm-accent">Market</span>
             </Link>
           </div>
           <CardTitle className="text-2xl text-center">Forgot Password</CardTitle>
@@ -107,7 +107,7 @@ export default function ForgotPasswordPage() {
           <CardFooter className="flex flex-col gap-4">
             <Button
               type="submit"
-              className="w-full bg-olx hover:bg-olx-light"
+              className="w-full bg-pm hover:bg-pm-light"
               isLoading={isLoading}
             >
               Send Reset Link
@@ -115,7 +115,7 @@ export default function ForgotPasswordPage() {
 
             <Link
               href="/login"
-              className="text-sm text-olx hover:text-olx-accent flex items-center justify-center"
+              className="text-sm text-pm hover:text-pm-accent flex items-center justify-center"
             >
               <ArrowLeft className="h-4 w-4 mr-1" />
               Back to Login
