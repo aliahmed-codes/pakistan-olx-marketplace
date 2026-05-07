@@ -54,7 +54,7 @@ export default async function CategoriesPage() {
       _count: {
         select: {
           subCategories: true,
-          ads: { where: { status: 'ACTIVE' } },
+          ads: { where: { isApproved: true } },
         },
       },
     },

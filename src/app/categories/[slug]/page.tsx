@@ -46,7 +46,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     where: { slug, isActive: true },
     include: {
       subCategories: { where: { isActive: true }, orderBy: { name: 'asc' } },
-      _count: { select: { ads: { where: { status: 'ACTIVE' } } } },
+      _count: { select: { ads: { where: { isApproved: true } } } },
     },
   });
 
@@ -61,7 +61,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const ads = await prisma.ad.findMany({
     where: {
       categoryId: category.id,
-      status: 'ACTIVE',
+      isApproved: true,
       ...(subCategory ? { subCategoryId: subCategory.id } : {}),
     },
     orderBy: [{ isFeatured: 'desc' }, { createdAt: 'desc' }],
