@@ -9,7 +9,7 @@ import {
   User, Mail, Phone, Camera, Save, Loader2,
   Package, CheckCircle, Star, Eye, Settings,
   MessageSquare, Heart, Plus, ChevronRight,
-  Bell, Shield, MapPin, Calendar,
+  Bell, Shield, Calendar,
   TrendingUp, Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,8 +33,6 @@ interface UserProfile {
   name: string;
   email: string;
   phone?: string;
-  city?: string;
-  bio?: string;
   profileImage?: string;
   createdAt: string;
   emailVerified?: string | null;
@@ -288,11 +286,6 @@ export default function ProfilePage() {
                               <Shield className="h-3 w-3" /> Verified
                             </Badge>
                           )}
-                          {profile?.city && (
-                            <span className="text-xs text-gray-400 flex items-center gap-1">
-                              <MapPin className="h-3 w-3" /> {profile.city}
-                            </span>
-                          )}
                           <span className="text-xs text-gray-400 flex items-center gap-1">
                             <Calendar className="h-3 w-3" /> Member since {memberSince}
                           </span>
@@ -540,17 +533,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Bio card if exists */}
-              {profile?.bio && (
-                <Card className="border-0 shadow-sm">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-gray-500 uppercase tracking-wider font-semibold">About</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-gray-600 leading-relaxed">{profile.bio}</p>
-                  </CardContent>
-                </Card>
-              )}
+
             </div>
           </div>
         </div>
