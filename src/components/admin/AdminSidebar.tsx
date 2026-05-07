@@ -13,20 +13,17 @@ import {
   LogOut,
   Menu,
   X,
-  Store,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { label: 'Ads', href: '/admin/ads', icon: Package },
-  { label: 'Stores', href: '/admin/stores', icon: Store },
-  { label: 'Users', href: '/admin/users', icon: Users },
-  { label: 'Feature Requests', href: '/admin/feature-requests', icon: Star },
-  { label: 'Reports', href: '/admin/reports', icon: Flag },
-  { label: 'Settings', href: '/admin/settings', icon: Settings },
+  { label: 'Dashboard',  href: '/admin',        icon: LayoutDashboard },
+  { label: 'Ads',        href: '/admin/ads',     icon: Package },
+  { label: 'Users',      href: '/admin/users',   icon: Users },
+  { label: 'Reports',    href: '/admin/reports', icon: Flag },
+  { label: 'Settings',   href: '/admin/settings',icon: Settings },
 ];
 
 export default function AdminSidebar() {

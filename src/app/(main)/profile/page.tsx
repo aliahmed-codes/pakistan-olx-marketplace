@@ -9,7 +9,7 @@ import {
   User, Mail, Phone, Camera, Save, Loader2,
   Package, CheckCircle, Star, Eye, Settings,
   MessageSquare, Heart, Plus, ChevronRight,
-  Store, Bell, Shield, MapPin, Calendar,
+  Bell, Shield, MapPin, Calendar,
   TrendingUp, Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -66,7 +66,6 @@ const QUICK_LINKS = [
   { label: "My Ads",       href: "/my-ads",          icon: Package,      color: "text-blue-600",   bg: "bg-blue-50"   },
   { label: "Favorites",    href: "/favorites",        icon: Heart,        color: "text-rose-600",   bg: "bg-rose-50"   },
   { label: "Messages",     href: "/chat",             icon: MessageSquare,color: "text-green-600",  bg: "bg-green-50"  },
-  { label: "My Store",     href: "/stores/my-store",  icon: Store,        color: "text-purple-600", bg: "bg-purple-50" },
   { label: "Notifications",href: "/notifications",    icon: Bell,         color: "text-orange-600", bg: "bg-orange-50" },
   { label: "Settings",     href: "/settings",         icon: Settings,     color: "text-gray-600",   bg: "bg-gray-50"   },
 ];

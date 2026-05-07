@@ -14,7 +14,6 @@ import {
   Menu,
   X,
   LayoutDashboard,
-  Store,
   ShoppingBag,
   Bell,
   Smartphone,
@@ -280,12 +279,7 @@ export default function Navbar() {
                             My Ads
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href="/stores/my-store" className="cursor-pointer">
-                            <Store className="mr-2 h-4 w-4" />
-                            My Store
-                          </Link>
-                        </DropdownMenuItem>
+
                         {user.role === 'ADMIN' && (
                           <>
                             <DropdownMenuSeparator />
@@ -416,10 +410,7 @@ export default function Navbar() {
                             <LayoutDashboard className="h-4 w-4 text-pm shrink-0" />
                             My Ads
                           </Link>
-                          <Link href="/stores/my-store" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <Store className="h-4 w-4 text-pm shrink-0" />
-                            My Store
-                          </Link>
+
                           <Link href="/favorites" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
                             <Heart className="h-4 w-4 text-pm shrink-0" />
                             Favourites

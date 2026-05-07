@@ -59,14 +59,12 @@ interface NotificationSettings {
   newMessages: boolean;
   adApproved: boolean;
   priceDropAlerts: boolean;
-  storeUpdates: boolean;
   marketingEmails: boolean;
 }
 
 interface PrivacySettings {
   showPhone: boolean;
   showProfile: boolean;
-  allowStoreContact: boolean;
 }
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
@@ -137,7 +135,6 @@ export default function SettingsPage() {
     newMessages: true,
     adApproved: true,
     priceDropAlerts: false,
-    storeUpdates: true,
     marketingEmails: false,
   });
 
@@ -145,7 +142,6 @@ export default function SettingsPage() {
   const [privacy, setPrivacy] = useState<PrivacySettings>({
     showPhone: true,
     showProfile: true,
-    allowStoreContact: true,
   });
 
   // Danger Zone state
@@ -770,12 +766,6 @@ export default function SettingsPage() {
                             icon: "📉",
                           },
                           {
-                            key: "storeUpdates" as const,
-                            label: "Store Updates",
-                            description: "Receive updates from stores you follow",
-                            icon: "🏪",
-                          },
-                          {
                             key: "marketingEmails" as const,
                             label: "Marketing Emails",
                             description: "Tips, promotions and product news from pm",
@@ -819,11 +809,6 @@ export default function SettingsPage() {
                             label: "Show my profile to other users",
                             description: "Your profile page is visible to all users",
                           },
-                          {
-                            key: "allowStoreContact" as const,
-                            label: "Allow stores to contact me",
-                            description: "Stores can send you offers and promotions",
-                          },
                         ].map((item) => (
                           <div key={item.key} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
                             <div>
@@ -859,7 +844,7 @@ export default function SettingsPage() {
                               <div>
                                 <p className="text-sm font-semibold text-gray-900">Delete Account</p>
                                 <p className="text-xs text-gray-500 mt-1 max-w-sm">
-                                  Permanently delete your account and all associated data — ads, messages, reviews, store — with no way to recover them.
+                                  Permanently delete your account and all associated data — ads, messages and reviews — with no way to recover them.
                                 </p>
                               </div>
                               <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
@@ -880,7 +865,6 @@ export default function SettingsPage() {
                                       <ul className="list-disc pl-5 text-sm space-y-1 text-gray-600">
                                         <li>All your ads (active, sold, pending)</li>
                                         <li>Your message history</li>
-                                        <li>Your store and its listings</li>
                                         <li>Your favorites and saved searches</li>
                                         <li>All reviews and ratings</li>
                                       </ul>

@@ -23,8 +23,6 @@ const footerLinks = {
     { name: 'Advertise with Us', href: '/advertise' },
   ],
   business: [
-    { name: 'Browse Stores', href: '/stores' },
-    { name: 'Create Your Store', href: '/stores/create' },
     { name: 'Support', href: '/support' },
   ],
 };
