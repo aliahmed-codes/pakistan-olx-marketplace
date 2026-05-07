@@ -406,7 +406,7 @@ export default function SettingsPage() {
                   </div>
                 </CardContent>
               </Card>
-            </Nav>
+            </nav>
 
             {/* Content Panel */}
             <div className="flex-1 min-w-0">
