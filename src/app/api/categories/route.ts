@@ -6,17 +6,14 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const includeCount = searchParams.get('includeCount') === 'true';
+    const showAll      = searchParams.get('all') === 'true';
 
     const categories = await prisma.category.findMany({
-      where: { isActive: true },
+      where: showAll ? undefined : { isActive: true },
       orderBy: { name: 'asc' },
-      include: includeCount
-        ? {
-            _count: {
-              select: { ads: { where: { isApproved: true } } },
-            },
-          }
-        : undefined,
+      include: {
+        _count: { select: { ads: includeCount ? { where: { isApproved: true } } : true } },
+      },
     });
 
     return NextResponse.json({

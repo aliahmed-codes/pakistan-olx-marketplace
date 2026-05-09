@@ -11,6 +11,7 @@ import {
   MessageSquare, Heart, Plus, ChevronRight,
   Bell, Shield, Calendar,
   TrendingUp, Clock,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -195,14 +195,27 @@ export async function POST(req: NextRequest) {
       data: { updatedAt: new Date() },
     });
 
-    // Emit socket event for real-time messaging
+    // Create persistent notification for receiver
+    const notification = await prisma.notification.create({
+      data: {
+        userId:  receiverId,
+        type:    'message',
+        title:   `New message from ${message.sender.name}`,
+        body:    message.content.length > 80 ? message.content.slice(0, 80) + '…' : message.content,
+        link:    `/chat?conversation=${validatedData.conversationId}`,
+        isRead:  false,
+      },
+    });
+
+    // Emit socket events for real-time delivery
     const io = getIO();
     if (io) {
       io.to(`conversation:${validatedData.conversationId}`).emit('new-message', message);
       io.to(`user:${receiverId}`).emit('new-notification', {
-        type: 'message',
+        type:           'message',
         conversationId: validatedData.conversationId,
-        message: message,
+        notification,
+        message,
       });
     }
 

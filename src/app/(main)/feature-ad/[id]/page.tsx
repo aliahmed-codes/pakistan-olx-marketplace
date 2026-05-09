@@ -372,7 +372,7 @@ export default function FeatureAdPage() {
                   <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
                     <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
                     <p className="text-sm text-blue-700 leading-relaxed">
-                      After submitting, our team reviews your request within <strong>24 hours</strong>. You'll be notified once your ad is featured.
+                      After submitting, our team reviews your request within <strong>24 hours</strong>. You&apos;ll be notified once your ad is featured.
                     </p>
                   </div>
 

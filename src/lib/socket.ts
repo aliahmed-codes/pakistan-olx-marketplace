@@ -1,20 +1,6 @@
 import { Server as NetServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import { NextApiRequest } from 'next';
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-export type NextApiResponseWithSocket = {
-  socket: {
-    server: NetServer & {
-      io?: SocketIOServer;
-    };
-  };
-};
+import { prisma } from './prisma';
 
 let io: SocketIOServer | null = null;
 
@@ -23,41 +9,32 @@ export function getIO(): SocketIOServer | null {
 }
 
 export function initSocket(server: NetServer): SocketIOServer {
-  if (io) {
-    return io;
-  }
+  if (io) return io;
 
   io = new SocketIOServer(server, {
     path: '/api/socket',
     addTrailingSlash: false,
-    cors: {
-      origin: '*',
-      methods: ['GET', 'POST'],
-    },
+    cors: { origin: '*', methods: ['GET', 'POST'] },
   });
 
   io.on('connection', (socket) => {
     console.log('Client connected:', socket.id);
 
-    // Join user-specific room for private messages
+    // ── Join user room for private notifications ─────────────────────────────
     socket.on('join-user', (userId: string) => {
       socket.join(`user:${userId}`);
-      console.log(`User ${userId} joined their room`);
     });
 
-    // Join conversation room
+    // ── Join / leave conversation rooms ──────────────────────────────────────
     socket.on('join-conversation', (conversationId: string) => {
       socket.join(`conversation:${conversationId}`);
-      console.log(`Joined conversation: ${conversationId}`);
     });
 
-    // Leave conversation room
     socket.on('leave-conversation', (conversationId: string) => {
       socket.leave(`conversation:${conversationId}`);
-      console.log(`Left conversation: ${conversationId}`);
     });
 
-    // Handle typing status
+    // ── Typing indicators ────────────────────────────────────────────────────
     socket.on('typing', ({ conversationId, userId }: { conversationId: string; userId: string }) => {
       socket.to(`conversation:${conversationId}`).emit('user-typing', { userId });
     });
@@ -66,9 +43,19 @@ export function initSocket(server: NetServer): SocketIOServer {
       socket.to(`conversation:${conversationId}`).emit('user-stop-typing', { userId });
     });
 
-    // Handle message seen
-    socket.on('message-seen', ({ conversationId, messageId }: { conversationId: string; messageId: string }) => {
-      socket.to(`conversation:${conversationId}`).emit('message-seen', { messageId });
+    // ── Seen receipts — persist to DB + broadcast ────────────────────────────
+    socket.on('message-seen', async ({ conversationId, messageId }: { conversationId: string; messageId: string }) => {
+      try {
+        // Persist seen status in the database
+        await prisma.message.updateMany({
+          where: { id: messageId, isSeen: false },
+          data: { isSeen: true, seenAt: new Date() },
+        });
+        // Broadcast to conversation room so sender sees ✓✓
+        socket.to(`conversation:${conversationId}`).emit('message-seen', { messageId });
+      } catch (e) {
+        console.error('message-seen DB error:', e);
+      }
     });
 
     socket.on('disconnect', () => {

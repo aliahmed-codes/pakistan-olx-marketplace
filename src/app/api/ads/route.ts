@@ -147,6 +147,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Admins cannot post ads
+    if (session.user.role === 'ADMIN') {
+      return NextResponse.json(
+        { success: false, error: 'Admins cannot post ads' },
+        { status: 403 }
+      );
+    }
+
     // Check if user is banned
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },

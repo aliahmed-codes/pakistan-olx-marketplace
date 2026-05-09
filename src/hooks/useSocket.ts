@@ -3,92 +3,54 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 
+let socket: Socket | null = null;
+
+function getSocket(): Socket {
+  if (!socket || socket.disconnected) {
+    socket = io({
+      path: '/api/socket',
+      addTrailingSlash: false,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      transports: ['websocket', 'polling'],
+    });
+  }
+  return socket;
+}
+
 export function useSocket(userId?: string) {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    // Initialize socket connection
-    socketRef.current = io(process.env.NEXT_PUBLIC_SOCKET_URL || '', {
-      path: '/api/socket',
-      autoConnect: true,
-    });
-
-    const socket = socketRef.current;
-
-    socket.on('connect', () => {
-      console.log('Socket connected:', socket.id);
-      if (userId) {
-        socket.emit('join-user', userId);
-      }
-    });
-
-    socket.on('disconnect', () => {
-      console.log('Socket disconnected');
-    });
-
-    return () => {
-      socket.disconnect();
-    };
+    const s = getSocket();
+    socketRef.current = s;
+    if (userId) s.emit('join-user', userId);
   }, [userId]);
 
-  const joinConversation = useCallback((conversationId: string) => {
-    socketRef.current?.emit('join-conversation', conversationId);
+  const joinConversation = useCallback((id: string) => {
+    socketRef.current?.emit('join-conversation', id);
   }, []);
 
-  const leaveConversation = useCallback((conversationId: string) => {
-    socketRef.current?.emit('leave-conversation', conversationId);
+  const leaveConversation = useCallback((id: string) => {
+    socketRef.current?.emit('leave-conversation', id);
   }, []);
 
-  const sendTyping = useCallback((conversationId: string, userId: string) => {
-    socketRef.current?.emit('typing', { conversationId, userId });
+  const emitTyping = useCallback((conversationId: string, uid: string) => {
+    socketRef.current?.emit('typing', { conversationId, userId: uid });
   }, []);
 
-  const stopTyping = useCallback((conversationId: string, userId: string) => {
-    socketRef.current?.emit('stop-typing', { conversationId, userId });
+  const emitStopTyping = useCallback((conversationId: string, uid: string) => {
+    socketRef.current?.emit('stop-typing', { conversationId, userId: uid });
   }, []);
 
-  const markMessageSeen = useCallback((conversationId: string, messageId: string) => {
+  const emitMessageSeen = useCallback((conversationId: string, messageId: string) => {
     socketRef.current?.emit('message-seen', { conversationId, messageId });
   }, []);
 
-  const onNewMessage = useCallback((callback: (message: any) => void) => {
-    socketRef.current?.on('new-message', callback);
-    return () => {
-      socketRef.current?.off('new-message', callback);
-    };
+  const on = useCallback(<T>(event: string, handler: (data: T) => void) => {
+    socketRef.current?.on(event, handler);
+    return () => { socketRef.current?.off(event, handler); };
   }, []);
 
-  const onUserTyping = useCallback((callback: (data: { userId: string }) => void) => {
-    socketRef.current?.on('user-typing', callback);
-    return () => {
-      socketRef.current?.off('user-typing', callback);
-    };
-  }, []);
-
-  const onUserStopTyping = useCallback((callback: (data: { userId: string }) => void) => {
-    socketRef.current?.on('user-stop-typing', callback);
-    return () => {
-      socketRef.current?.off('user-stop-typing', callback);
-    };
-  }, []);
-
-  const onMessageSeen = useCallback((callback: (data: { messageId: string }) => void) => {
-    socketRef.current?.on('message-seen', callback);
-    return () => {
-      socketRef.current?.off('message-seen', callback);
-    };
-  }, []);
-
-  return {
-    socket: socketRef.current,
-    joinConversation,
-    leaveConversation,
-    sendTyping,
-    stopTyping,
-    markMessageSeen,
-    onNewMessage,
-    onUserTyping,
-    onUserStopTyping,
-    onMessageSeen,
-  };
+  return { socket: socketRef, joinConversation, leaveConversation, emitTyping, emitStopTyping, emitMessageSeen, on };
 }

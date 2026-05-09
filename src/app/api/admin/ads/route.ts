@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
+import { getIO } from '@/lib/socket';
 
 // GET /api/admin/ads - Get all ads (admin only)
 export async function GET(req: NextRequest) {
@@ -126,21 +127,34 @@ export async function PUT(req: NextRequest) {
         status: status,
       },
       include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        category: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
+        user: { select: { id: true, name: true, email: true } },
+        category: { select: { id: true, name: true } },
       },
     });
+
+    // Create notification for the ad owner
+    const isApproved = status === 'APPROVED';
+    const notification = await prisma.notification.create({
+      data: {
+        userId: updatedAd.userId,
+        type:   isApproved ? 'ad_approved' : 'ad_rejected',
+        title:  isApproved ? 'Ad Approved! 🎉' : 'Ad Rejected',
+        body:   isApproved
+          ? `Your ad "${updatedAd.title}" has been approved and is now live.`
+          : `Your ad "${updatedAd.title}" was rejected.${reason ? ` Reason: ${reason}` : ''}`,
+        link:   isApproved ? `/ad/${updatedAd.id}` : '/my-ads',
+        isRead: false,
+      },
+    });
+
+    // Emit real-time notification to owner
+    const io = getIO();
+    if (io) {
+      io.to(`user:${updatedAd.userId}`).emit('new-notification', {
+        type: isApproved ? 'ad_approved' : 'ad_rejected',
+        notification,
+      });
+    }
 
     return NextResponse.json({
       success: true,

@@ -5,39 +5,21 @@ import { useSession, signOut } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search,
-  Plus,
-  User,
-  LogOut,
-  Heart,
-  MessageSquare,
-  Menu,
-  X,
-  LayoutDashboard,
-  ShoppingBag,
-  Bell,
-  Smartphone,
-  Car,
-  Building2,
-  Tv,
-  Bike,
-  Briefcase,
-  Wrench,
-  ChevronDown,
+  Search, Plus, User, LogOut, Heart, MessageSquare,
+  Menu, X, LayoutDashboard, ShoppingBag, Bell,
+  Smartphone, Car, Building2, Tv, Bike, Briefcase, Wrench, ChevronDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { getInitials } from '@/lib/utils';
+import { useSocket } from '@/hooks/useSocket';
 
 // Icon map for dynamic categories fetched from API
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -74,12 +56,16 @@ interface ApiCategory { id: string; name: string; slug: string; icon?: string; }
 
 export default function Navbar() {
   const { data: session } = useSession();
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [scrolled, setScrolled] = useState(false);
-  const [navCategories, setNavCategories] = useState(FALLBACK_CATEGORIES);
+  const [isSearchOpen, setIsSearchOpen]     = useState(false);
+  const [unreadCount, setUnreadCount]       = useState(0);
+  const [notifCount, setNotifCount]         = useState(0);
+  const [scrolled, setScrolled]             = useState(false);
+  const [navCategories, setNavCategories]   = useState(FALLBACK_CATEGORIES);
 
-  const user = session?.user;
+  const user    = session?.user;
+  const isAdmin = user?.role === 'ADMIN';
+
+  const { on } = useSocket(user?.id);
 
   // Detect page scroll so we can add a subtle shadow
   useEffect(() => {
@@ -97,8 +83,8 @@ export default function Navbar() {
           setNavCategories(
             data.data.slice(0, 8).map((c: ApiCategory) => ({
               label: c.name,
-              slug: c.slug,
-              icon: ICON_MAP[c.icon || ''] || Smartphone,
+              slug:  c.slug,
+              icon:  ICON_MAP[c.icon || ''] || Smartphone,
             }))
           );
         }
@@ -106,24 +92,33 @@ export default function Navbar() {
       .catch(() => {/* keep fallback */});
   }, []);
 
-  // Poll for unread message count every 30 seconds
+  // Poll for unread message count (chat) every 30s
+  useEffect(() => {
+    if (!user?.id || isAdmin) return;
+    const fetchUnread = async () => {
+      const res  = await fetch('/api/chat/unread-count');
+      const data = await res.json();
+      if (data.success) setUnreadCount(data.data.count);
+    };
+    fetchUnread();
+    const iv = setInterval(fetchUnread, 30000);
+    return () => clearInterval(iv);
+  }, [user?.id, isAdmin]);
+
+  // Fetch initial notification count
   useEffect(() => {
     if (!user?.id) return;
-
-    const fetchUnreadCount = async () => {
-      try {
-        const response = await fetch('/api/chat/unread-count');
-        const data = await response.json();
-        if (data.success) setUnreadCount(data.data.count);
-      } catch (error) {
-        console.error('Error fetching unread count:', error);
-      }
-    };
-
-    fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000);
-    return () => clearInterval(interval);
+    fetch('/api/notifications?limit=1')
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setNotifCount(d.unreadCount ?? 0); })
+      .catch(() => {});
   }, [user?.id]);
+
+  // Real-time: increment notification badge
+  useEffect(() => {
+    const off = on('new-notification', () => setNotifCount((c) => c + 1));
+    return off;
+  }, [on]);
 
   return (
     <>
@@ -186,51 +181,50 @@ export default function Navbar() {
                   {isSearchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
                 </Button>
 
-                {/* Post Ad – desktop */}
-                <Link href="/post-ad" className="hidden sm:block ml-1">
-                  <Button className="bg-pm-yellow text-pm font-semibold hover:bg-pm-yellow/90 gap-2 rounded-full px-5 shadow-sm">
-                    <Plus className="h-4 w-4" />
-                    Sell Now
-                  </Button>
-                </Link>
+                {/* Post Ad – desktop: hidden for admins */}
+                {!isAdmin && (
+                  <Link href="/post-ad" className="hidden sm:block ml-1">
+                    <Button className="bg-pm-yellow text-pm font-semibold hover:bg-pm-yellow/90 gap-2 rounded-full px-5 shadow-sm">
+                      <Plus className="h-4 w-4" />
+                      Sell Now
+                    </Button>
+                  </Link>
+                )}
+                {isAdmin && (
+                  <Link href="/admin" className="hidden sm:block ml-1">
+                    <Button className="bg-white/10 text-white font-semibold hover:bg-white/20 gap-2 rounded-full px-4 shadow-sm border border-white/20">
+                      <LayoutDashboard className="h-4 w-4" />
+                      Admin Panel
+                    </Button>
+                  </Link>
+                )}
 
                 {user ? (
                   <>
-                    {/* Favorites */}
-                    <Link href="/favorites" className="hidden sm:block">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-white hover:bg-white/10 relative"
-                        aria-label="Favourites"
-                      >
-                        <Heart className="h-5 w-5" />
-                      </Button>
-                    </Link>
+                    {/* Favorites – hidden for admins */}
+                    {!isAdmin && (
+                      <Link href="/favorites" className="hidden sm:block">
+                        <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 relative" aria-label="Favourites">
+                          <Heart className="h-5 w-5" />
+                        </Button>
+                      </Link>
+                    )}
 
-                    {/* Messages */}
-                    <Link href="/chat" className="hidden sm:block">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-white hover:bg-white/10 relative"
-                        aria-label="Messages"
-                      >
-                        <MessageSquare className="h-5 w-5" />
-                        <CountBadge count={unreadCount} />
-                      </Button>
-                    </Link>
+                    {/* Messages – hidden for admins */}
+                    {!isAdmin && (
+                      <Link href="/chat" className="hidden sm:block">
+                        <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 relative" aria-label="Messages">
+                          <MessageSquare className="h-5 w-5" />
+                          <CountBadge count={unreadCount} />
+                        </Button>
+                      </Link>
+                    )}
 
                     {/* Notifications */}
                     <Link href="/notifications" className="hidden sm:block">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-white hover:bg-white/10 relative"
-                        aria-label="Notifications"
-                      >
+                      <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 relative" aria-label="Notifications">
                         <Bell className="h-5 w-5" />
-                        <CountBadge count={unreadCount} />
+                        <CountBadge count={notifCount} />
                       </Button>
                     </Link>
 
@@ -264,29 +258,29 @@ export default function Navbar() {
                           <div className="flex flex-col overflow-hidden">
                             <p className="text-sm font-semibold text-white truncate">{user.name}</p>
                             <p className="text-xs text-white/60 truncate">{user.email}</p>
+                            {isAdmin && <span className="text-[10px] text-pm-yellow font-bold mt-0.5">Admin Account</span>}
                           </div>
                         </div>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link href="/profile" className="cursor-pointer">
-                            <User className="mr-2 h-4 w-4" />
-                            Profile
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href="/my-ads" className="cursor-pointer">
-                            <LayoutDashboard className="mr-2 h-4 w-4" />
-                            My Ads
-                          </Link>
-                        </DropdownMenuItem>
-
-                        {user.role === 'ADMIN' && (
+                        {!isAdmin && (
                           <>
-                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                              <Link href="/profile" className="cursor-pointer">
+                                <User className="mr-2 h-4 w-4" /> Profile
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <Link href="/my-ads" className="cursor-pointer">
+                                <LayoutDashboard className="mr-2 h-4 w-4" /> My Ads
+                              </Link>
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                        {isAdmin && (
+                          <>
                             <DropdownMenuItem asChild>
                               <Link href="/admin" className="cursor-pointer">
-                                <LayoutDashboard className="mr-2 h-4 w-4" />
-                                Admin Dashboard
+                                <LayoutDashboard className="mr-2 h-4 w-4" /> Admin Dashboard
                               </Link>
                             </DropdownMenuItem>
                           </>
@@ -296,8 +290,7 @@ export default function Navbar() {
                           className="cursor-pointer text-red-500 focus:text-red-500"
                           onClick={() => signOut({ callbackUrl: '/' })}
                         >
-                          <LogOut className="mr-2 h-4 w-4" />
-                          Logout
+                          <LogOut className="mr-2 h-4 w-4" /> Logout
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -402,38 +395,32 @@ export default function Navbar() {
 
                       {user ? (
                         <>
-                          <Link href="/profile" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <User className="h-4 w-4 text-pm shrink-0" />
-                            Profile
-                          </Link>
-                          <Link href="/my-ads" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <LayoutDashboard className="h-4 w-4 text-pm shrink-0" />
-                            My Ads
-                          </Link>
-
-                          <Link href="/favorites" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <Heart className="h-4 w-4 text-pm shrink-0" />
-                            Favourites
-                          </Link>
-                          <Link href="/chat" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <MessageSquare className="h-4 w-4 text-pm shrink-0" />
-                            Messages
-                            {unreadCount > 0 && (
-                              <Badge className="ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                                {unreadCount > 99 ? '99+' : unreadCount}
-                              </Badge>
-                            )}
-                          </Link>
-                          <Link href="/notifications" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                            <Bell className="h-4 w-4 text-pm shrink-0" />
-                            Notifications
-                          </Link>
-                          {user.role === 'ADMIN' && (
+                          {/* User nav in mobile drawer */}
+                          {!isAdmin ? (
+                            <>
+                              <Link href="/profile" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+                                <User className="h-4 w-4 text-pm shrink-0" /> Profile
+                              </Link>
+                              <Link href="/my-ads" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+                                <LayoutDashboard className="h-4 w-4 text-pm shrink-0" /> My Ads
+                              </Link>
+                              <Link href="/favorites" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+                                <Heart className="h-4 w-4 text-pm shrink-0" /> Favourites
+                              </Link>
+                              <Link href="/chat" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+                                <MessageSquare className="h-4 w-4 text-pm shrink-0" /> Messages
+                                {unreadCount > 0 && <Badge className="ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{unreadCount > 99 ? '99+' : unreadCount}</Badge>}
+                              </Link>
+                            </>
+                          ) : (
                             <Link href="/admin" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                              <LayoutDashboard className="h-4 w-4 text-pm shrink-0" />
-                              Admin Dashboard
+                              <LayoutDashboard className="h-4 w-4 text-pm shrink-0" /> Admin Dashboard
                             </Link>
                           )}
+                          <Link href="/notifications" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+                            <Bell className="h-4 w-4 text-pm shrink-0" /> Notifications
+                            {notifCount > 0 && <Badge className="ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{notifCount > 99 ? '99+' : notifCount}</Badge>}
+                          </Link>
                           <div className="mt-auto pt-4 border-t border-gray-100">
                             <button
                               onClick={() => signOut({ callbackUrl: '/' })}
@@ -521,17 +508,20 @@ export default function Navbar() {
       {/* ------------------------------------------------------------------ */}
       {/* Mobile floating "Post Ad" button                                   */}
       {/* ------------------------------------------------------------------ */}
-      <div className="fixed bottom-6 right-5 z-40 sm:hidden">
-        <Link href="/post-ad">
-          <motion.button
-            whileTap={{ scale: 0.93 }}
-            className="flex items-center gap-2 rounded-full bg-pm-yellow text-pm font-bold px-5 py-3 shadow-xl ring-2 ring-pm-yellow/40"
-          >
-            <Plus className="h-5 w-5" />
-            Post Ad
-          </motion.button>
-        </Link>
-      </div>
+      {/* Mobile floating Post Ad — hidden for admins */}
+      {!isAdmin && (
+        <div className="fixed bottom-6 right-5 z-40 sm:hidden">
+          <Link href="/post-ad">
+            <motion.button
+              whileTap={{ scale: 0.93 }}
+              className="flex items-center gap-2 rounded-full bg-pm-yellow text-pm font-bold px-5 py-3 shadow-xl ring-2 ring-pm-yellow/40"
+            >
+              <Plus className="h-5 w-5" />
+              Post Ad
+            </motion.button>
+          </Link>
+        </div>
+      )}
     </>
   );
 }

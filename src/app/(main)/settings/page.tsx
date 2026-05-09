@@ -583,7 +583,7 @@ export default function SettingsPage() {
                       <Card>
                         <CardHeader>
                           <CardTitle className="text-base">Change Password</CardTitle>
-                          <CardDescription>Use a strong password that you don't use elsewhere</CardDescription>
+                          <CardDescription>Use a strong password that you don&apos;t use elsewhere</CardDescription>
                         </CardHeader>
                         <CardContent>
                           <form onSubmit={handlePasswordChange} className="space-y-4">

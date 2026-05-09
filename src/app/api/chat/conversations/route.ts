@@ -24,22 +24,12 @@ export async function GET() {
       },
       include: {
         user: {
-          select: {
-            id: true,
-            name: true,
-            profileImage: true,
-          },
+          select: { id: true, name: true, profileImage: true },
         },
         messages: {
           orderBy: { createdAt: 'desc' },
           take: 1,
-          select: {
-            id: true,
-            content: true,
-            createdAt: true,
-            senderId: true,
-            isSeen: true,
-          },
+          select: { id: true, content: true, createdAt: true, senderId: true, isSeen: true },
         },
         ad: {
           select: {
@@ -47,13 +37,17 @@ export async function GET() {
             title: true,
             images: true,
             price: true,
+            userId: true,           // seller id — needed to determine otherParticipant
+            user: {                 // seller profile
+              select: { id: true, name: true, profileImage: true },
+            },
           },
         },
       },
       orderBy: { updatedAt: 'desc' },
     });
 
-    // Add unread count for each conversation
+    // Compute otherParticipant correctly for both buyer and seller
     const conversationsWithUnread = await Promise.all(
       conversations.map(async (conv) => {
         const unreadCount = await prisma.message.count({
@@ -64,15 +58,26 @@ export async function GET() {
           },
         });
 
-        // Get the other participant
-        const otherParticipant = [conv.user].find(
-          (p) => p.id !== session.user.id
-        );
+        // conv.userId = buyer, conv.ad.userId = seller
+        // "other" is whoever the current user is NOT
+        const iAmTheBuyer  = conv.userId === session.user.id;
+        const otherParticipant = iAmTheBuyer
+          ? (conv.ad as any).user   // I'm the buyer, show the seller
+          : conv.user;               // I'm the seller, show the buyer
 
         return {
-          ...conv,
+          id:            conv.id,
+          updatedAt:     conv.updatedAt,
+          ad: {
+            id:     conv.ad.id,
+            title:  conv.ad.title,
+            images: conv.ad.images,
+            price:  Number(conv.ad.price),
+            userId: (conv.ad as any).userId,
+          },
+          user:             otherParticipant,   // always the OTHER user
+          lastMessage:      conv.messages[0] ?? null,
           unreadCount,
-          otherParticipant,
         };
       })
     );
@@ -102,7 +107,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-
+    // Admins cannot start conversations
+    if (session.user.role === 'ADMIN') {
+      return NextResponse.json(
+        { success: false, error: 'Admins cannot initiate conversations' },
+        { status: 403 }
+      );
+    }
 
     const body = await req.json();
     const { participantId, adId } = body;
