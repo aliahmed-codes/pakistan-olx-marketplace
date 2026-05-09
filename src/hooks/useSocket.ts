@@ -3,15 +3,20 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 
+/**
+ * Socket.io server URL:
+ *  - Development: http://localhost:3001  (set NEXT_PUBLIC_SOCKET_URL in .env.local)
+ *  - Production:  set NEXT_PUBLIC_SOCKET_URL=https://socket.yourdomain.com
+ */
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
+
 let socket: Socket | null = null;
 
 function getSocket(): Socket {
   if (!socket || socket.disconnected) {
-    socket = io({
-      path: '/api/socket',
-      addTrailingSlash: false,
+    socket = io(SOCKET_URL, {
       reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      reconnectionDelay:    1000,
       transports: ['websocket', 'polling'],
     });
   }
@@ -25,6 +30,10 @@ export function useSocket(userId?: string) {
     const s = getSocket();
     socketRef.current = s;
     if (userId) s.emit('join-user', userId);
+
+    return () => {
+      // Don't disconnect on unmount — keep the singleton alive across navigation
+    };
   }, [userId]);
 
   const joinConversation = useCallback((id: string) => {
@@ -48,9 +57,19 @@ export function useSocket(userId?: string) {
   }, []);
 
   const on = useCallback(<T>(event: string, handler: (data: T) => void) => {
-    socketRef.current?.on(event, handler);
-    return () => { socketRef.current?.off(event, handler); };
+    const s = socketRef.current;
+    if (!s) return () => {};
+    s.on(event, handler);
+    return () => { s.off(event, handler); };
   }, []);
 
-  return { socket: socketRef, joinConversation, leaveConversation, emitTyping, emitStopTyping, emitMessageSeen, on };
+  return {
+    socket: socketRef,
+    joinConversation,
+    leaveConversation,
+    emitTyping,
+    emitStopTyping,
+    emitMessageSeen,
+    on,
+  };
 }

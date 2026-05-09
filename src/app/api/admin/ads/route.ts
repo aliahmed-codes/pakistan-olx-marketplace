@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
-import { getIO } from '@/lib/socket';
+import { emitToRoom } from '@/lib/socket';
 
 // GET /api/admin/ads - Get all ads (admin only)
 export async function GET(req: NextRequest) {
@@ -148,13 +148,10 @@ export async function PUT(req: NextRequest) {
     });
 
     // Emit real-time notification to owner
-    const io = getIO();
-    if (io) {
-      io.to(`user:${updatedAd.userId}`).emit('new-notification', {
-        type: isApproved ? 'ad_approved' : 'ad_rejected',
-        notification,
-      });
-    }
+    await emitToRoom(`user:${updatedAd.userId}`, 'new-notification', {
+      type: isApproved ? 'ad_approved' : 'ad_rejected',
+      notification,
+    });
 
     return NextResponse.json({
       success: true,

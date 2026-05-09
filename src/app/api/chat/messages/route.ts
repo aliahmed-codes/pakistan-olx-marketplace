@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 import { messageSchema } from '@/lib/validations';
-import { getIO } from '@/lib/socket';
+import { emitToRoom } from '@/lib/socket';
 
 // GET /api/chat/messages - Get messages for a conversation
 export async function GET(req: NextRequest) {
@@ -208,16 +208,16 @@ export async function POST(req: NextRequest) {
     });
 
     // Emit socket events for real-time delivery
-    const io = getIO();
-    if (io) {
-      io.to(`conversation:${validatedData.conversationId}`).emit('new-message', message);
-      io.to(`user:${receiverId}`).emit('new-notification', {
-        type:           'message',
-        conversationId: validatedData.conversationId,
-        notification,
-        message,
-      });
-    }
+    await emitToRoom(
+      `conversation:${validatedData.conversationId}`,
+      'new-message',
+      message,
+    );
+    await emitToRoom(
+      `user:${receiverId}`,
+      'new-notification',
+      { type: 'message', conversationId: validatedData.conversationId, notification, message },
+    );
 
     return NextResponse.json(
       {
