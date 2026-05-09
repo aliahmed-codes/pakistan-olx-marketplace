@@ -14,7 +14,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/use-toast';
 import { useSocket } from '@/hooks/useSocket';
 import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import { formatRelativeTime, getInitials, formatPrice } from '@/lib/utils';
 import { format, isToday, isYesterday } from 'date-fns';
 
@@ -54,7 +53,8 @@ export default function ChatPage() {
   const params  = useSearchParams();
   const { data: session, status } = useSession();
   const { toast } = useToast();
-  const bottomRef  = useRef<HTMLDivElement>(null);
+  const bottomRef    = useRef<HTMLDivElement>(null);
+  const messagesRef  = useRef<HTMLDivElement>(null);
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -120,9 +120,10 @@ export default function ChatPage() {
     return off;
   }, [on]);
 
-  // Scroll to bottom
+  // Scroll messages container to bottom (NOT the page)
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = messagesRef.current;
+    if (container) container.scrollTop = container.scrollHeight;
   }, [messages]);
 
   const openConversation = useCallback(async (conv: Conversation) => {
@@ -190,16 +191,15 @@ export default function ChatPage() {
   });
 
   if (status === 'loading') return (
-    <><Navbar /><main className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-pm" /></main><Footer /></>
+    <><Navbar /><main className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-pm" /></main></>
   );
 
   return (
     <>
       <Navbar />
-      <main className="min-h-[calc(100vh-64px)] bg-gray-50">
-        <div className="container mx-auto px-2 md:px-4 py-4 max-w-6xl">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex"
-               style={{ height: 'calc(100vh - 140px)', minHeight: 520 }}>
+      <main className="h-[calc(100vh-64px)] bg-gray-50 overflow-hidden">
+        <div className="h-full px-2 md:px-4 py-4 max-w-6xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex h-full">
 
             {/* Sidebar */}
             <div className={`${selected ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-80 lg:w-96 border-r border-gray-100 shrink-0`}>
@@ -298,7 +298,7 @@ export default function ChatPage() {
                   </div>
 
                   {/* Messages */}
-                  <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-[#f5f6fa]">
+                  <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-[#f5f6fa]">
                     {groupByDate(messages).map((group) => (
                       <div key={group.label}>
                         <div className="flex items-center gap-3 my-3">
@@ -380,7 +380,6 @@ export default function ChatPage() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 }
