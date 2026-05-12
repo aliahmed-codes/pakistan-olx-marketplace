@@ -10,6 +10,8 @@ export async function GET(req: NextRequest) {
     const ads = await prisma.ad.findMany({
       where: {
         isApproved: true,
+        isActiveAd: true,
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
         isFeatured: true,
         featuredUntil: {
           gt: new Date(),

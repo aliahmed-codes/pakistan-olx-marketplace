@@ -28,13 +28,16 @@ export async function GET(req: NextRequest) {
 
     if (status === 'active') {
       where.isApproved = true;
+      where.isActiveAd = true;
+      where.OR = [{ expiresAt: null }, { expiresAt: { gt: new Date() } }];
     } else if (status === 'pending') {
       where.isApproved = false;
+      where.status = 'PENDING';
     } else if (status === 'featured') {
       where.isFeatured = true;
-      where.featuredUntil = {
-        gt: new Date(),
-      };
+      where.featuredUntil = { gt: new Date() };
+    } else if (status === 'expired') {
+      where.expiresAt = { lt: new Date() };
     }
 
     const [ads, total] = await Promise.all([

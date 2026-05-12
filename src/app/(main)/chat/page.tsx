@@ -65,6 +65,8 @@ export default function ChatPage() {
   const [isLoading, setIsLoading]         = useState(true);
   const [isTyping, setIsTyping]           = useState(false);
   const [search, setSearch]               = useState('');
+  // Online presence: userId → lastSeen ISO string (undefined = online)
+  const [presence, setPresence]           = useState<Record<string, string | 'online'>>({});
 
   const { joinConversation, leaveConversation, emitTyping, emitStopTyping, emitMessageSeen, on } =
     useSocket(session?.user?.id);
@@ -118,6 +120,17 @@ export default function ChatPage() {
       setMessages((prev) => prev.map((m) => m.id === messageId ? { ...m, isSeen: true } : m));
     });
     return off;
+  }, [on]);
+
+  // Online / last-seen presence
+  useEffect(() => {
+    const offOnline  = on<{ userId: string }>('user-online',  ({ userId }) =>
+      setPresence((p) => ({ ...p, [userId]: 'online' }))
+    );
+    const offOffline = on<{ userId: string; lastSeen: string }>('user-offline', ({ userId, lastSeen }) =>
+      setPresence((p) => ({ ...p, [userId]: lastSeen }))
+    );
+    return () => { offOnline(); offOffline(); };
   }, [on]);
 
   // Scroll messages container to bottom (NOT the page)
@@ -286,9 +299,21 @@ export default function ChatPage() {
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-900 text-sm truncate">{getOther(selected).name}</p>
-                      <Link href={`/ad/${selected.ad.id}`} className="text-xs text-pm hover:underline truncate block">
-                        {formatPrice(selected.ad.price)} · {selected.ad.title.slice(0, 40)}{selected.ad.title.length > 40 ? '…' : ''}
-                      </Link>
+                      {/* Online / last-seen indicator */}
+                      {presence[getOther(selected).id] === 'online' ? (
+                        <span className="flex items-center gap-1 text-[11px] text-emerald-500 font-medium">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Online
+                        </span>
+                      ) : presence[getOther(selected).id] ? (
+                        <span className="text-[11px] text-gray-400">
+                          Last seen {formatRelativeTime(presence[getOther(selected).id] as string)}
+                        </span>
+                      ) : (
+                        <Link href={`/ad/${selected.ad.id}`} className="text-xs text-pm hover:underline truncate block">
+                          {formatPrice(selected.ad.price)} · {selected.ad.title.slice(0, 40)}{selected.ad.title.length > 40 ? '…' : ''}
+                        </Link>
+                      )}
                     </div>
                     <Link href={`/ad/${selected.ad.id}`} className="shrink-0">
                       <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-gray-100">

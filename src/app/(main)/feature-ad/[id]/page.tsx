@@ -79,12 +79,13 @@ export default function FeatureAdPage() {
 
         const adData = await adRes.json();
         if (adData.success) {
-          if (adData.data.userId !== session.user.id) {
+          const ad = adData.data.ad; // API returns { ad, relatedAds }
+          if (ad.userId !== session.user.id) {
             toast({ title: 'Unauthorized', description: 'You can only feature your own ads.', variant: 'destructive' });
             router.push('/my-ads');
             return;
           }
-          setAd(adData.data);
+          setAd(ad);
         } else {
           router.push('/my-ads');
         }

@@ -83,15 +83,19 @@ export async function GET(req: NextRequest) {
 
     // Mark messages as seen
     await prisma.message.updateMany({
+      where: { conversationId, receiverId: session.user.id, isSeen: false },
+      data:  { isSeen: true, seenAt: new Date() },
+    });
+
+    // Mark the conversation's unread notification as read (clears badge)
+    await prisma.notification.updateMany({
       where: {
-        conversationId,
-        receiverId: session.user.id,
-        isSeen: false,
+        userId:         session.user.id,
+        type:           'message',
+        conversationId: conversationId as string,
+        isRead:         false,
       },
-      data: {
-        isSeen: true,
-        seenAt: new Date(),
-      },
+      data: { isRead: true, readAt: new Date() },
     });
 
     const totalPages = Math.ceil(total / limit);
@@ -195,28 +199,57 @@ export async function POST(req: NextRequest) {
       data: { updatedAt: new Date() },
     });
 
-    // Create persistent notification for receiver
-    const notification = await prisma.notification.create({
-      data: {
-        userId:  receiverId,
-        type:    'message',
-        title:   `New message from ${message.sender.name}`,
-        body:    message.content.length > 80 ? message.content.slice(0, 80) + '…' : message.content,
-        link:    `/chat?conversation=${validatedData.conversationId}`,
-        isRead:  false,
+    // ── Smart notifications (industry standard: 1 unread notif per conversation) ──
+    // Find an existing unread message notification for this conversation
+    const existingNotif = await prisma.notification.findFirst({
+      where: {
+        userId:         receiverId,
+        type:           'message',
+        conversationId: validatedData.conversationId,
+        isRead:         false,
       },
     });
 
-    // Emit socket events for real-time delivery
+    let notification;
+    if (existingNotif) {
+      // Bump the count and update the preview — no new notification
+      notification = await prisma.notification.update({
+        where: { id: existingNotif.id },
+        data: {
+          msgCount: { increment: 1 },
+          body:     message.content.length > 80 ? message.content.slice(0, 80) + '…' : message.content,
+          updatedAt: new Date(),
+        },
+      });
+    } else {
+      // First unread message — create the notification
+      notification = await prisma.notification.create({
+        data: {
+          userId:         receiverId,
+          type:           'message',
+          title:          `New message from ${message.sender.name}`,
+          body:           message.content.length > 80 ? message.content.slice(0, 80) + '…' : message.content,
+          link:           `/chat?conversation=${validatedData.conversationId}`,
+          conversationId: validatedData.conversationId,
+          isRead:         false,
+          msgCount:       1,
+          updatedAt:      new Date(),
+        },
+      });
+
+      // Only fire new-notification socket event for the FIRST unread message
+      await emitToRoom(
+        `user:${receiverId}`,
+        'new-notification',
+        { type: 'message', conversationId: validatedData.conversationId, notification, message },
+      );
+    }
+
+    // Always emit new-message to conversation room for real-time display
     await emitToRoom(
       `conversation:${validatedData.conversationId}`,
       'new-message',
       message,
-    );
-    await emitToRoom(
-      `user:${receiverId}`,
-      'new-notification',
-      { type: 'message', conversationId: validatedData.conversationId, notification, message },
     );
 
     return NextResponse.json(

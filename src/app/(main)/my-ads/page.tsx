@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react';
 import {
   Package, Plus, Edit2, Trash2, Star,
   MessageSquare, Eye, MapPin, Clock,
-  AlertCircle, CheckCircle2,
+  AlertCircle, CheckCircle2, RefreshCw, Timer,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -33,8 +33,10 @@ interface Ad {
   city: string;
   condition: 'NEW' | 'USED';
   isApproved: boolean;
+  isActiveAd: boolean;
   isFeatured: boolean;
   featuredUntil: string | null;
+  expiresAt: string | null;
   views: number;
   createdAt: string;
   category: { name: string; slug: string };
@@ -48,6 +50,7 @@ const TABS = [
   { value: 'active',   label: 'Active'   },
   { value: 'pending',  label: 'Pending'  },
   { value: 'featured', label: 'Featured' },
+  { value: 'expired',  label: 'Expired'  },
 ] as const;
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -102,6 +105,25 @@ export default function MyAdsPage() {
       setDeleteId(null);
     }
   };
+
+  const handleReactivate = async (adId: string) => {
+    try {
+      const res  = await fetch(`/api/ads/${adId}/reactivate`, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        toast({ title: 'Submitted for review', description: data.message });
+        fetchAds();
+      } else {
+        toast({ title: 'Error', description: data.error, variant: 'destructive' });
+      }
+    } catch {
+      toast({ title: 'Error', description: 'Something went wrong.', variant: 'destructive' });
+    }
+  };
+
+  const isExpired = (ad: Ad) =>
+    !!ad.expiresAt && new Date(ad.expiresAt) < new Date();
+
 
   // ── Loading ────────────────────────────────────────────────────────────────
 
@@ -189,12 +211,17 @@ export default function MyAdsPage() {
                     )}
                     {/* Badges */}
                     <div className="absolute top-2 left-2 flex gap-1.5">
-                      {!ad.isApproved && (
+                      {isExpired(ad) && (
+                        <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <Timer className="h-2.5 w-2.5" /> Expired
+                        </span>
+                      )}
+                      {!ad.isApproved && !isExpired(ad) && (
                         <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                           <AlertCircle className="h-2.5 w-2.5" /> Pending
                         </span>
                       )}
-                      {ad.isApproved && !ad.isFeatured && (
+                      {ad.isApproved && !isExpired(ad) && !ad.isFeatured && (
                         <span className="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                           <CheckCircle2 className="h-2.5 w-2.5" /> Active
                         </span>
@@ -220,6 +247,12 @@ export default function MyAdsPage() {
                     <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
                       <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {ad.city}</span>
                       <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {formatRelativeTime(ad.createdAt)}</span>
+                      {ad.expiresAt && !isExpired(ad) && (
+                        <span className="flex items-center gap-1 text-amber-500 font-medium">
+                          <Timer className="h-3 w-3" />
+                          Expires {formatRelativeTime(ad.expiresAt)}
+                        </span>
+                      )}
                     </div>
 
                     {/* Stats row */}
@@ -237,17 +270,29 @@ export default function MyAdsPage() {
 
                     {/* Action buttons */}
                     <div className="flex gap-2">
-                      <Link href={`/edit-ad/${ad.id}`} className="flex-1">
-                        <Button variant="outline" size="sm" className="w-full gap-1 text-xs rounded-full">
-                          <Edit2 className="h-3.5 w-3.5" /> Edit
+                      {isExpired(ad) ? (
+                        <Button
+                          size="sm"
+                          className="flex-1 gap-1 bg-pm text-white hover:bg-pm-light text-xs rounded-full font-bold"
+                          onClick={() => handleReactivate(ad.id)}
+                        >
+                          <RefreshCw className="h-3.5 w-3.5" /> Reactivate
                         </Button>
-                      </Link>
-                      {!ad.isFeatured && ad.isApproved && (
-                        <Link href={`/feature-ad/${ad.id}`} className="flex-1">
-                          <Button size="sm" className="w-full gap-1 bg-pm-yellow text-pm hover:bg-pm-yellow/90 text-xs rounded-full font-bold">
-                            <Star className="h-3.5 w-3.5" /> Feature
-                          </Button>
-                        </Link>
+                      ) : (
+                        <>
+                          <Link href={`/edit-ad/${ad.id}`} className="flex-1">
+                            <Button variant="outline" size="sm" className="w-full gap-1 text-xs rounded-full">
+                              <Edit2 className="h-3.5 w-3.5" /> Edit
+                            </Button>
+                          </Link>
+                          {!ad.isFeatured && ad.isApproved && (
+                            <Link href={`/feature-ad/${ad.id}`} className="flex-1">
+                              <Button size="sm" className="w-full gap-1 bg-pm-yellow text-pm hover:bg-pm-yellow/90 text-xs rounded-full font-bold">
+                                <Star className="h-3.5 w-3.5" /> Feature
+                              </Button>
+                            </Link>
+                          )}
+                        </>
                       )}
                       <Dialog>
                         <DialogTrigger asChild>

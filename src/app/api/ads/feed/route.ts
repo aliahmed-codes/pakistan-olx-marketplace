@@ -31,6 +31,8 @@ export async function GET(req: NextRequest) {
             where: {
               status: 'APPROVED',
               isApproved: true,
+              isActiveAd: true,
+              OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
               categoryId: { in: interestCategoryIds },
             },
             include: {
@@ -60,6 +62,8 @@ export async function GET(req: NextRequest) {
             where: {
               status: 'APPROVED',
               isApproved: true,
+              isActiveAd: true,
+              OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
               categoryId: { in: interestCategoryIds },
             },
           }),
@@ -71,6 +75,8 @@ export async function GET(req: NextRequest) {
             where: {
               status: 'APPROVED',
               isApproved: true,
+              isActiveAd: true,
+              OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
             },
             include: {
               category: {
@@ -99,6 +105,8 @@ export async function GET(req: NextRequest) {
             where: {
               status: 'APPROVED',
               isApproved: true,
+              isActiveAd: true,
+              OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
             },
           }),
         ]);

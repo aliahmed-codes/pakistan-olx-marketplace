@@ -1,12 +1,3 @@
-/**
- * Standalone Socket.io server — runs on port 3001
- *
- * Dev:  npm run dev:socket  (tsx watch socket-server.ts)
- * Prod: npm run start:socket (tsx socket-server.ts)
- *
- * Next.js API routes emit events via HTTP POST /emit
- * Frontend clients connect directly to this server
- */
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { PrismaClient } from '@prisma/client';
@@ -18,8 +9,7 @@ const ALLOWED_ORIGINS = process.env.SOCKET_CORS_ORIGIN
   ? process.env.SOCKET_CORS_ORIGIN.split(',')
   : ['http://localhost:3000'];
 
-// ── HTTP server (also handles the internal /emit endpoint) ──────────────────
-
+// ── HTTP helper ──────────────────────────────────────────────────────────────
 function readBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
     let data = '';
@@ -34,44 +24,32 @@ const httpServer = createServer(async (req: IncomingMessage, res: ServerResponse
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-socket-secret');
 
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204); res.end(); return;
-  }
+  if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
-  // ── Health check ─────────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ status: 'ok', connections: io?.engine.clientsCount ?? 0 }));
     return;
   }
 
-  // ── Internal emit endpoint (Next.js API routes call this) ────────────────
   if (req.method === 'POST' && req.url === '/emit') {
-    const secret = req.headers['x-socket-secret'];
-    if (secret !== SECRET) {
+    if (req.headers['x-socket-secret'] !== SECRET) {
       res.writeHead(403, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Forbidden' }));
       return;
     }
-
     try {
-      const body = await readBody(req);
-      const { room, event, data } = JSON.parse(body) as {
+      const { room, event, data } = JSON.parse(await readBody(req)) as {
         room: string; event: string; data: unknown;
       };
-
       if (!room || !event) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'room and event are required' }));
-        return;
+        res.writeHead(400); res.end(JSON.stringify({ error: 'room and event required' })); return;
       }
-
       io.to(room).emit(event, data);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ ok: true }));
     } catch {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Invalid JSON body' }));
+      res.writeHead(400); res.end(JSON.stringify({ error: 'Invalid JSON' }));
     }
     return;
   }
@@ -79,27 +57,58 @@ const httpServer = createServer(async (req: IncomingMessage, res: ServerResponse
   res.writeHead(404); res.end();
 });
 
-// ── Socket.io ───────────────────────────────────────────────────────────────
-
+// ── Socket.io ────────────────────────────────────────────────────────────────
 const io = new SocketIOServer(httpServer, {
   cors: { origin: ALLOWED_ORIGINS, methods: ['GET', 'POST'] },
   pingTimeout:  60000,
   pingInterval: 25000,
 });
 
+// userId → socketId map for tracking online users
+const userSockets = new Map<string, string>();
+
+async function setOnline(userId: string) {
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data:  { isOnline: true, lastSeen: new Date() },
+    });
+    // Broadcast presence to everyone (conversations will show green dot)
+    io.emit('user-online', { userId });
+  } catch (e) {
+    console.error('[socket] setOnline error:', e);
+  }
+}
+
+async function setOffline(userId: string) {
+  try {
+    const now = new Date();
+    await prisma.user.update({
+      where: { id: userId },
+      data:  { isOnline: false, lastSeen: now },
+    });
+    io.emit('user-offline', { userId, lastSeen: now.toISOString() });
+  } catch (e) {
+    console.error('[socket] setOffline error:', e);
+  }
+}
+
 io.on('connection', (socket) => {
   console.log(`[socket] connected: ${socket.id}`);
+  let currentUserId: string | null = null;
 
-  // Join user-specific room for private notifications
-  socket.on('join-user', (userId: string) => {
+  // Join user room + mark online
+  socket.on('join-user', async (userId: string) => {
+    currentUserId = userId;
+    userSockets.set(userId, socket.id);
     socket.join(`user:${userId}`);
-    console.log(`[socket] user ${userId} joined their room`);
+    await setOnline(userId);
+    console.log(`[socket] user ${userId} online`);
   });
 
   // Join / leave conversation rooms
   socket.on('join-conversation', (conversationId: string) => {
     socket.join(`conversation:${conversationId}`);
-    console.log(`[socket] joined conversation: ${conversationId}`);
   });
 
   socket.on('leave-conversation', (conversationId: string) => {
@@ -126,20 +135,24 @@ io.on('connection', (socket) => {
       });
       socket.to(`conversation:${conversationId}`).emit('message-seen', { messageId });
     } catch (e) {
-      console.error('[socket] message-seen DB error:', e);
+      console.error('[socket] message-seen error:', e);
     }
   });
 
-  socket.on('disconnect', (reason) => {
+  // Disconnect → mark offline
+  socket.on('disconnect', async (reason) => {
     console.log(`[socket] disconnected: ${socket.id} (${reason})`);
+    if (currentUserId) {
+      userSockets.delete(currentUserId);
+      await setOffline(currentUserId);
+    }
   });
 });
 
-// ── Start ───────────────────────────────────────────────────────────────────
-
+// ── Start ────────────────────────────────────────────────────────────────────
 httpServer.listen(PORT, () => {
   console.log(`🔌 Socket.io server running on http://localhost:${PORT}`);
-  console.log(`   Health: http://localhost:${PORT}/health`);
-  console.log(`   Emit:   POST http://localhost:${PORT}/emit`);
-  console.log(`   Allowed origins: ${ALLOWED_ORIGINS.join(', ')}`);
+  console.log(`   Health:  http://localhost:${PORT}/health`);
+  console.log(`   Emit:    POST http://localhost:${PORT}/emit`);
+  console.log(`   Origins: ${ALLOWED_ORIGINS.join(', ')}`);
 });

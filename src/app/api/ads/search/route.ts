@@ -21,6 +21,8 @@ export async function GET(req: NextRequest) {
     // Build where clause
     const where: any = {
       isApproved: true,
+      isActiveAd: true,
+      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
     };
 
     // Full-text search on title and description

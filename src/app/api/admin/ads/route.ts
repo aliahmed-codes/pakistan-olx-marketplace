@@ -120,11 +120,18 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    // Calculate expiry date (30 days from approval)
+    const expiresAt = status === 'APPROVED'
+      ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      : null;
+
     const updatedAd = await prisma.ad.update({
       where: { id: adId },
       data: {
         isApproved: status === 'APPROVED',
-        status: status,
+        isActiveAd: status === 'APPROVED',
+        status:     status,
+        expiresAt,
       },
       include: {
         user: { select: { id: true, name: true, email: true } },

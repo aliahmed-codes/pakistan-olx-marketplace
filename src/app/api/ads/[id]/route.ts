@@ -66,6 +66,8 @@ export async function GET(
       where: {
         categoryId: ad.categoryId,
         isApproved: true,
+        isActiveAd: true,
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
         id: { not: id },
       },
       include: {
