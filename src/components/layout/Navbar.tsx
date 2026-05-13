@@ -271,7 +271,7 @@ export default function Navbar() {
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link href="/my-ads" className="cursor-pointer">
-                                <LayoutDashboard className="mr-2 h-4 w-4" /> My Ads
+                                <LayoutDashboard className="mr-2 h-4 w-4" /> My Listings
                               </Link>
                             </DropdownMenuItem>
                           </>
@@ -356,13 +356,13 @@ export default function Navbar() {
                     {/* Drawer nav links */}
                     <nav className="flex flex-col gap-1 p-4 flex-1 overflow-y-auto">
 
-                      {/* Post Ad highlight */}
+                      {/* Post Listing highlight */}
                       <Link
                         href="/post-ad"
                         className="flex items-center gap-3 rounded-lg bg-pm-yellow text-pm font-semibold px-4 py-3 mb-2 hover:bg-pm-yellow/90 transition-colors"
                       >
                         <Plus className="h-5 w-5" />
-                        Post an Ad — Free!
+                        Post a Listing — Free!
                       </Link>
 
                       {/* Categories */}
@@ -390,7 +390,7 @@ export default function Navbar() {
                         Home
                       </Link>
                       <Link href="/search" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                        Browse Ads
+                        Browse Listings
                       </Link>
 
                       {user ? (
@@ -402,7 +402,7 @@ export default function Navbar() {
                                 <User className="h-4 w-4 text-pm shrink-0" /> Profile
                               </Link>
                               <Link href="/my-ads" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-                                <LayoutDashboard className="h-4 w-4 text-pm shrink-0" /> My Ads
+                                <LayoutDashboard className="h-4 w-4 text-pm shrink-0" /> My Listings
                               </Link>
                               <Link href="/favorites" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
                                 <Heart className="h-4 w-4 text-pm shrink-0" /> Favourites
@@ -517,7 +517,7 @@ export default function Navbar() {
               className="flex items-center gap-2 rounded-full bg-pm-yellow text-pm font-bold px-5 py-3 shadow-xl ring-2 ring-pm-yellow/40"
             >
               <Plus className="h-5 w-5" />
-              Post Ad
+              List Item
             </motion.button>
           </Link>
         </div>

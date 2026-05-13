@@ -155,7 +155,7 @@ export default function MyAdsPage() {
           <div className="container mx-auto px-4 relative">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-extrabold mb-1">My Ads</h1>
+                <h1 className="text-3xl font-extrabold mb-1">My Listings</h1>
                 <p className="text-white/70">Manage and track your listings</p>
               </div>
               <Link href="/post-ad">

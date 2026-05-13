@@ -2,9 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Heart } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { MapPin, Heart, Star, Clock, Zap } from 'lucide-react';
 import { formatPrice, formatRelativeTime, truncateText } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 import { useToast } from '@/components/ui/use-toast';
@@ -40,130 +38,109 @@ export function AdCard({ ad, showFavorite = true }: AdCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const price = typeof ad.price === 'object' ? ad.price.toNumber() : ad.price;
+
   const handleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!session?.user) {
-      toast({
-        title: 'Login Required',
-        description: 'Please login to add items to favorites.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Login Required', description: 'Please login to save listings.', variant: 'destructive' });
       return;
     }
 
     setIsLoading(true);
-
     try {
       if (isFavorite) {
-        const response = await fetch(`/api/favorites?adId=${ad.id}`, {
-          method: 'DELETE',
-        });
-
-        if (response.ok) {
-          setIsFavorite(false);
-          toast({
-            title: 'Removed from Favorites',
-            description: 'The ad has been removed from your favorites.',
-          });
-        }
+        const r = await fetch(`/api/favorites?adId=${ad.id}`, { method: 'DELETE' });
+        if (r.ok) { setIsFavorite(false); toast({ title: 'Removed from Saved' }); }
       } else {
-        const response = await fetch('/api/favorites', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const r = await fetch('/api/favorites', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ adId: ad.id }),
         });
-
-        if (response.ok) {
-          setIsFavorite(true);
-          toast({
-            title: 'Added to Favorites',
-            description: 'The ad has been added to your favorites.',
-          });
-        }
+        if (r.ok) { setIsFavorite(true); toast({ title: 'Listing Saved!' }); }
       }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    } catch {
+      toast({ title: 'Error', description: 'Something went wrong.', variant: 'destructive' });
+    } finally { setIsLoading(false); }
   };
 
-  const price = typeof ad.price === 'object' ? ad.price.toNumber() : ad.price;
-
   return (
-    <Link href={`/ad/${ad.id}`}>
-      <div className="ad-card group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300">
-        {/* Image Container */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+    <Link href={`/ad/${ad.id}`} className="block group">
+      <div className={`relative bg-white rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${
+        ad.isFeatured
+          ? 'border-amber-200 shadow-md shadow-amber-100/60'
+          : 'border-gray-100 shadow-sm'
+      }`}>
+
+        {/* Featured glow strip */}
+        {ad.isFeatured && (
+          <div className="h-1 w-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400" />
+        )}
+
+        {/* Image */}
+        <div className="relative overflow-hidden bg-gray-100" style={{ aspectRatio: '4/3' }}>
           <Image
             src={ad.images[0] || '/images/placeholder.jpg'}
             alt={ad.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
 
-          {/* Featured Badge */}
+          {/* Featured badge */}
           {ad.isFeatured && (
-            <Badge
-              variant="featured"
-              className="absolute top-2 left-2 z-10"
-            >
-              Featured
-            </Badge>
+            <div className="absolute top-2.5 left-2.5 flex items-center gap-1 bg-amber-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+              <Star className="h-2.5 w-2.5 fill-white" /> Featured
+            </div>
           )}
 
-          {/* Condition Badge */}
-          <Badge
-            variant={ad.condition === 'NEW' ? 'success' : 'secondary'}
-            className="absolute top-2 right-2 z-10"
-          >
+          {/* Condition badge */}
+          <div className={`absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+            ad.condition === 'NEW'
+              ? 'bg-emerald-500 text-white'
+              : 'bg-gray-800/70 text-white backdrop-blur-sm'
+          }`}>
             {ad.condition === 'NEW' ? 'New' : 'Used'}
-          </Badge>
+          </div>
 
-          {/* Favorite Button */}
+          {/* Save button */}
           {showFavorite && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute bottom-2 right-2 z-10 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
+            <button
               onClick={handleFavorite}
               disabled={isLoading}
+              className={`absolute bottom-2.5 right-2.5 p-1.5 rounded-full shadow-md transition-all opacity-0 group-hover:opacity-100 ${
+                isFavorite ? 'bg-red-50' : 'bg-white/90 hover:bg-white'
+              }`}
             >
-              <Heart
-                className={`h-5 w-5 ${
-                  isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600'
-                }`}
-              />
-            </Button>
+              <Heart className={`h-4 w-4 transition-colors ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-500'}`} />
+            </button>
           )}
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-3.5">
           {/* Price */}
-          <p className="text-xl font-bold text-pm mb-1">
+          <p className="text-lg font-extrabold text-pm leading-tight mb-1">
             {formatPrice(price)}
           </p>
 
           {/* Title */}
-          <h3 className="font-medium text-gray-900 mb-2 line-clamp-2">
-            {truncateText(ad.title, 50)}
+          <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 leading-snug mb-2.5">
+            {truncateText(ad.title, 55)}
           </h3>
 
-          {/* Location & Time */}
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <div className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              <span className="truncate max-w-[100px]">{ad.city}</span>
-            </div>
-            <span>{formatRelativeTime(ad.createdAt)}</span>
+          {/* Footer */}
+          <div className="flex items-center justify-between text-xs text-gray-400">
+            <span className="flex items-center gap-1 truncate">
+              <MapPin className="h-3 w-3 shrink-0" />
+              <span className="truncate">{ad.city}</span>
+            </span>
+            <span className="flex items-center gap-1 shrink-0 ml-2">
+              <Clock className="h-3 w-3" />
+              {formatRelativeTime(ad.createdAt)}
+            </span>
           </div>
         </div>
       </div>

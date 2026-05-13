@@ -27,14 +27,14 @@ export async function generateMetadata({ params }: AdPageProps): Promise<Metadat
 
   if (!ad || !ad.isApproved) {
     return {
-      title: 'Ad Not Found - Pakistan Marketplace',
+      title: 'Listing Not Found — Pakistan Market',
     };
   }
 
   const price = typeof ad.price === 'object' ? ad.price.toNumber() : ad.price;
 
   return {
-    title: `${ad.title} - Rs ${price.toLocaleString()} - Pakistan Marketplace`,
+    title: `${ad.title} — Rs ${price.toLocaleString()} | Pakistan Market`,
     description: ad.description.slice(0, 160),
     openGraph: {
       title: ad.title,
@@ -57,8 +57,8 @@ async function getAd(id: string) {
           id: true,
           name: true,
           profileImage: true,
-          phone: true,
           createdAt: true,
+          // phone intentionally excluded — contact via chat only
         },
       },
       category: {
